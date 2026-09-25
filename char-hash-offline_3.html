@@ -1,0 +1,721 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Хэш по символам / словам / фразе — Advanced</title>
+<style>
+:root {
+  --bg: #E8ECF6;
+  --panel: #FFFFFF;
+  --line: #C4CEE6;
+  --text: #0D1430;
+  --mute: #55638C;
+  --acc: #D9480F;
+  --on-acc: #FFFFFF;
+  --grid: rgba(13,20,48,.06);
+  --ok: #0a7a3e;
+  --display: system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+}
+[data-theme="dark"] {
+  --bg: #0A0F22;
+  --panel: #111A36;
+  --line: #26335E;
+  --text: #E5EBFF;
+  --mute: #8F9CC8;
+  --acc: #FF6B2C;
+  --on-acc: #160800;
+  --grid: rgba(140,160,255,.07);
+  --ok: #3dd68c;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background-color: var(--bg);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px),
+                    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--text);
+  font: 400 .95rem/1.55 var(--mono);
+}
+main {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: clamp(16px, 4vw, 48px) clamp(14px, 3vw, 28px);
+  display: grid;
+  gap: 16px;
+}
+header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+h1 {
+  font: 800 clamp(1.6rem, 5.5vw, 2.6rem)/1.05 var(--display);
+  letter-spacing: -.02em;
+  margin: 0 0 6px;
+}
+.lead { margin: 0; max-width: 58ch; color: var(--mute); font-size: .9rem; }
+.theme-btn {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: 600 .8rem var(--mono);
+  color: var(--text);
+  cursor: pointer;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.lab, legend {
+  font-size: .78rem;
+  color: var(--mute);
+  padding: 0;
+  margin-bottom: 6px;
+  display: block;
+}
+textarea, input[type=text], input[type=number] {
+  width: 100%;
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 400 1rem/1.4 var(--mono);
+  padding: 9px 11px;
+}
+textarea {
+  font-size: clamp(1.05rem, 3vw, 1.35rem);
+  min-height: 78px;
+  resize: vertical;
+}
+.hide { -webkit-text-security: disc; }
+textarea:focus-visible, input:focus-visible, button:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 2px;
+}
+.two, .ctl {
+  display: grid;
+  gap: 14px 20px;
+}
+.two {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-top: 12px;
+}
+.ctl { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  align-items: center;
+}
+.chip { position: relative; }
+.chip input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.chip span {
+  display: block;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font: 600 .78rem var(--mono);
+}
+.chip input:checked + span {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--on-acc);
+}
+#cs, #customLen {
+  width: 5.8rem;
+  padding: 5px 7px;
+  font-size: .78rem;
+}
+#rc {
+  margin: 0;
+  font-size: .82rem;
+  color: var(--mute);
+  line-height: 1.45;
+}
+.res-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.res-head h2 { margin: 0; font: 700 1rem var(--display); }
+.btn-row { display: flex; flex-wrap: wrap; gap: 6px; }
+button.action {
+  background: var(--acc);
+  color: var(--on-acc);
+  border: 0;
+  border-radius: 4px;
+  padding: 8px 13px;
+  font: 700 .78rem var(--display);
+  cursor: pointer;
+}
+button.action.secondary {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid var(--line);
+}
+button.action:disabled { opacity: .4; cursor: not-allowed; }
+#out {
+  font-size: .88rem;
+  line-height: 1.55;
+  word-break: break-all;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 11px;
+  min-height: 3.2rem;
+  max-height: 12rem;
+  overflow: auto;
+}
+#out .a { color: var(--text); }
+#out .b { color: var(--mute); }
+#out .sp { color: var(--acc); font-weight: 700; }
+#out .ph { color: var(--mute); }
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin-top: 8px;
+  font-size: .78rem;
+  color: var(--mute);
+}
+#st { color: var(--acc); font-weight: 700; }
+#chain {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
+  gap: 9px;
+}
+.tile {
+  display: block;
+  text-align: left;
+  cursor: pointer;
+  background: var(--panel);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 9px;
+  font: inherit;
+}
+.tile:hover { border-color: var(--acc); }
+.tile span { display: block; }
+.g {
+  font: 800 1.7rem/1.25 var(--display);
+  height: 2.3rem;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.u { font-size: .65rem; color: var(--mute); }
+.fp { display: flex !important; gap: 2px; height: 8px; margin: 6px 0; }
+.fp i { flex: 1; border-radius: 1px; }
+.h { font-size: .65rem; line-height: 1.35; word-break: break-all; }
+@keyframes grow { from { transform: scaleX(0); } }
+.new .fp i {
+  transform-origin: left;
+  animation: grow .32s both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .new .fp i { animation: none; }
+}
+.note {
+  margin: 4px 0 0;
+  font-size: .78rem;
+  color: var(--mute);
+  max-width: 72ch;
+}
+.history {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+.hist-item {
+  font-size: .75rem;
+  padding: 4px 9px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: var(--bg);
+  cursor: pointer;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hist-item:hover { border-color: var(--acc); }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Хэш по символам, словам или фразе</h1>
+    <p class="lead">Один файл · полностью офлайн · выберите единицу хэширования и позицию соли</p>
+  </div>
+  <button type="button" class="theme-btn" id="themeBtn" title="Сменить тему">Тема</button>
+</header>
+
+<section class="panel">
+  <label class="lab" for="t">Кодовое слово или фраза</label>
+  <textarea id="t" spellcheck="false" autocomplete="off" placeholder="Введите слово, фразу или текст…"></textarea>
+  <div class="two">
+    <div>
+      <label class="lab" for="s">Соль (необязательно)</label>
+      <input type="text" id="s" autocomplete="off" placeholder="Добавляется к каждому элементу">
+    </div>
+    <div>
+      <label class="lab" for="off">Начать хэш с символа №</label>
+      <input type="number" id="off" min="1" value="1">
+    </div>
+  </div>
+  <div class="two" style="margin-top:12px">
+    <fieldset>
+      <legend class="lab">Единица хэширования</legend>
+      <div class="chips" id="unit"></div>
+    </fieldset>
+    <fieldset>
+      <legend class="lab">Позиция соли</legend>
+      <div class="chips" id="saltpos"></div>
+    </fieldset>
+  </div>
+  <div class="two" style="margin-top:12px">
+    <div>
+      <label class="lab" for="prefix">Префикс итоговой строки</label>
+      <input type="text" id="prefix" placeholder="например: HASH_">
+    </div>
+    <div>
+      <label class="lab" for="suffix">Суффикс итоговой строки</label>
+      <input type="text" id="suffix" placeholder="например: _END">
+    </div>
+  </div>
+</section>
+
+<section class="panel ctl" aria-label="Настройки">
+  <fieldset>
+    <legend>Алгоритм</legend>
+    <div class="chips" id="algo"></div>
+  </fieldset>
+  <fieldset>
+    <legend>Длина каждого хэша</legend>
+    <div class="chips" id="len">
+      <input type="number" id="customLen" min="1" max="128" placeholder="своя" aria-label="Своя длина">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Разделитель</legend>
+    <div class="chips" id="sep">
+      <input type="text" id="cs" maxlength="8" placeholder="свой" aria-label="Свой разделитель">
+    </div>
+  </fieldset>
+  <fieldset>
+    <legend>Параметры рецепта</legend>
+    <div class="chips" id="opt"></div>
+  </fieldset>
+</section>
+
+<section class="panel">
+  <h2 style="margin:0 0 8px;font:700 1rem var(--display)">Рецепт</h2>
+  <p id="rc"></p>
+</section>
+
+<section class="panel">
+  <div class="res-head">
+    <h2>Готовая строка</h2>
+    <div class="btn-row">
+      <button type="button" class="action secondary" id="clearBtn">Очистить</button>
+      <button type="button" class="action secondary" id="exportBtn">Экспорт</button>
+      <button type="button" class="action" id="copy">Скопировать</button>
+    </div>
+  </div>
+  <div id="out"></div>
+  <div class="meta">
+    <span>Символов: <b id="n">0</b></span>
+    <span>Длина: <b id="l">0</b></span>
+    <span id="st" role="status"></span>
+  </div>
+</section>
+
+<section>
+  <h2 style="font:700 1rem var(--display);margin:0 0 10px" id="chainTitle">Хэш каждого символа</h2>
+  <div id="chain"></div>
+</section>
+
+<section class="panel" id="histPanel" style="display:none">
+  <h2 style="margin:0 0 8px;font:700 .95rem var(--display)">Недавние</h2>
+  <div class="history" id="history"></div>
+</section>
+
+<p class="note">
+  Всё считается только на вашем устройстве. MD5 встроен в файл. SHA-семейство использует Web Crypto API браузера.
+  Нажмите на плитку, чтобы скопировать хеш отдельного элемента (символа, слова или фразы — в зависимости от выбранного режима).
+</p>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const el = (t, c, x) => {
+  const e = document.createElement(t);
+  if (c) e.className = c;
+  if (x != null) e.textContent = x;
+  return e;
+};
+const enc = new TextEncoder();
+const S = window.crypto && crypto.subtle;
+const seg = window.Intl && Intl.Segmenter
+  ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+  : null;
+const splitChars = t => seg ? Array.from(seg.segment(t), x => x.segment) : Array.from(t);
+const splitWords = t => (t.match(/\S+/g) || []);
+function split(t, unit) {
+  if (unit === 'word') return splitWords(t);
+  if (unit === 'phrase') return t === '' ? [] : [t];
+  return splitChars(t);
+}
+const SHOW = { ' ': '␠', '\n': '↵', '\t': '⇥' };
+
+const chk = id => document.querySelector('#' + id + ' input:checked')?.value;
+const flag = v => document.querySelector('#opt input[value="' + v + '"]')?.checked;
+const hex = b => Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, '0')).join('');
+
+/* ——— MD5 (чистый JS) ——— */
+function md5(str) {
+  const b = enc.encode(str), n = b.length;
+  const len = ((n + 8 >> 6) + 1) * 16;
+  const x = new Int32Array(len);
+  for (let i = 0; i < n; i++) x[i >> 2] |= b[i] << ((i % 4) * 8);
+  x[n >> 2] |= 0x80 << ((n % 4) * 8);
+  x[len - 2] = n << 3;
+  x[len - 1] = n >>> 29;
+  const K = [], s = [7,12,17,22, 5,9,14,20, 4,11,16,23, 6,10,15,21];
+  for (let i = 0; i < 64; i++) K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296) | 0;
+  let a0 = 0x67452301, b0 = 0xefcdab89 | 0, c0 = 0x98badcfe | 0, d0 = 0x10325476;
+  for (let o = 0; o < len; o += 16) {
+    let A = a0, B = b0, C = c0, D = d0;
+    for (let i = 0; i < 64; i++) {
+      let F, g;
+      if (i < 16) { F = (B & C) | (~B & D); g = i; }
+      else if (i < 32) { F = (D & B) | (~D & C); g = (5 * i + 1) % 16; }
+      else if (i < 48) { F = B ^ C ^ D; g = (3 * i + 5) % 16; }
+      else { F = C ^ (B | ~D); g = (7 * i) % 16; }
+      F = (F + A + K[i] + x[o + g]) | 0;
+      A = D; D = C; C = B;
+      const sh = s[(i >> 4) * 4 + (i % 4)];
+      B = (B + ((F << sh) | (F >>> (32 - sh)))) | 0;
+    }
+    a0 = (a0 + A) | 0; b0 = (b0 + B) | 0; c0 = (c0 + C) | 0; d0 = (d0 + D) | 0;
+  }
+  return [a0, b0, c0, d0].map(v => {
+    let h = '';
+    for (let i = 0; i < 4; i++) h += ((v >>> (i * 8)) & 255).toString(16).padStart(2, '0');
+    return h;
+  }).join('');
+}
+
+async function H(algo, s) {
+  if (algo === 'MD5') return md5(s);
+  if (!S) throw new Error('SHA недоступен — выберите MD5');
+  return hex(await S.digest(algo, enc.encode(s)));
+}
+
+/* ——— UI helpers ——— */
+function group(id, type, items, def) {
+  const box = $(id);
+  const tail = box.querySelector('input[type=text], input[type=number]');
+  items.forEach(([v, t]) => {
+    const l = el('label', 'chip');
+    const i = el('input');
+    i.type = type; i.name = id; i.value = v;
+    if (v === def) i.checked = true;
+    i.addEventListener('change', render);
+    l.append(i, el('span', '', t));
+    if (tail) box.insertBefore(l, tail);
+    else box.append(l);
+  });
+}
+
+group('algo', 'radio',
+  [['MD5','MD5'], ['SHA-1','SHA-1'], ['SHA-256','SHA-256'], ['SHA-384','SHA-384'], ['SHA-512','SHA-512']],
+  'SHA-256');
+group('len', 'radio',
+  [['0','полный'], ['8','8'], ['16','16'], ['32','32'], ['custom','своя']],
+  '0');
+group('sep', 'radio',
+  [['none','без'], ['-','-'], [':',':'], [',',','], [' ','пробел'], ['_','_'], ['custom','свой']],
+  '-');
+group('opt', 'checkbox',
+  [['pos','Номер позиции'], ['rev','Обратный порядок'], ['dbl','Двойной хэш'],
+   ['upper','Заглавные'], ['skip','Пропускать пробелы'], ['mask','Скрыть ввод'],
+   ['hashResult','Хешировать итог']],
+  null);
+group('unit', 'radio',
+  [['char','по символам'], ['word','по словам'], ['phrase','фраза целиком']],
+  'char');
+group('saltpos', 'radio',
+  [['front','спереди'], ['back','сзади']],
+  'front');
+
+/* ——— Theme ——— */
+const themeBtn = $('themeBtn');
+function applyTheme(t) {
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('charhash-theme', t);
+  themeBtn.textContent = t === 'dark' ? 'Светлая' : 'Тёмная';
+}
+themeBtn.onclick = () => {
+  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  applyTheme(next);
+};
+const savedTheme = localStorage.getItem('charhash-theme') ||
+  (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+applyTheme(savedTheme);
+
+/* ——— History ——— */
+const HIST_KEY = 'charhash-history';
+function loadHistory() {
+  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveHistory(text) {
+  if (!text.trim()) return;
+  let h = loadHistory().filter(x => x !== text);
+  h.unshift(text);
+  h = h.slice(0, 8);
+  localStorage.setItem(HIST_KEY, JSON.stringify(h));
+  renderHistory();
+}
+function renderHistory() {
+  const list = loadHistory();
+  const panel = $('histPanel');
+  const box = $('history');
+  box.replaceChildren();
+  if (!list.length) { panel.style.display = 'none'; return; }
+  panel.style.display = '';
+  list.forEach(txt => {
+    const b = el('button', 'hist-item', txt);
+    b.type = 'button';
+    b.title = txt;
+    b.onclick = () => { $('t').value = txt; render(); };
+    box.append(b);
+  });
+}
+renderHistory();
+
+/* ——— Core render ——— */
+let seq = 0, prev = 0, copyText = '', tm;
+
+function say(m) {
+  $('st').textContent = m;
+  clearTimeout(tm);
+  tm = setTimeout(() => { $('st').textContent = ''; }, 2200);
+}
+
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = el('textarea');
+    a.value = text;
+    a.style.cssText = 'position:fixed;opacity:0';
+    document.body.append(a);
+    a.select();
+    try { document.execCommand('copy'); } catch (_) {}
+    a.remove();
+  }
+  say(msg);
+}
+
+async function render() {
+  const my = ++seq;
+  const out = $('out'), chain = $('chain');
+  const algo = chk('algo');
+  let lenVal = chk('len');
+  if (lenVal === 'custom') {
+    lenVal = parseInt($('customLen').value, 10) || 0;
+  } else {
+    lenVal = +lenVal;
+  }
+  const up = flag('upper'), pos = flag('pos'), dbl = flag('dbl'),
+        rev = flag('rev'), hide = flag('mask'), hashRes = flag('hashResult');
+  const salt = $('s').value;
+  const off = Math.max(0, (parseInt($('off').value, 10) || 1) - 1);
+  const prefix = $('prefix').value;
+  const suffix = $('suffix').value;
+  const unit = chk('unit') || 'char';
+  const saltFront = (chk('saltpos') || 'front') === 'front';
+
+  $('chainTitle').textContent = unit === 'word' ? 'Хэш каждого слова'
+    : unit === 'phrase' ? 'Хэш фразы целиком'
+    : 'Хэш каждого символа';
+
+  $('t').classList.toggle('hide', hide);
+  $('s').classList.toggle('hide', hide);
+
+  let sv = chk('sep');
+  sv = sv === 'none' ? '' : sv === 'custom' ? $('cs').value : sv;
+
+  const unitLabel = unit === 'word' ? 'слово' : unit === 'phrase' ? 'фразу целиком' : 'символ';
+  const saltDesc = salt ? (saltFront ? 'соль + ' : '') : '';
+  const saltTail = salt && !saltFront ? ' + соль' : '';
+
+  $('rc').textContent =
+    algo + '(' + saltDesc + (pos ? 'номер + ' : '') + unitLabel + saltTail + ')' +
+    (dbl ? ', затем ' + algo + ' от результата' : '') +
+    '. Берутся символы хэша с ' + (off + 1) +
+    (lenVal ? ' по ' + (off + lenVal) : ' и до конца') +
+    '. Порядок ' + (rev ? 'обратный' : 'прямой') +
+    ', разделитель ' + (sv ? '«' + sv + '»' : 'без') +
+    (up ? ', заглавные' : '') +
+    (hashRes ? '. Затем хешируется вся готовая строка' : '') +
+    (prefix || suffix ? '. Prefix/Suffix применены' : '') + '.';
+
+  const skipChk = document.querySelector('#opt input[value="skip"]');
+  if (skipChk) {
+    const skipLabel = skipChk.closest('.chip');
+    const skipDisabled = unit !== 'char';
+    skipChk.disabled = skipDisabled;
+    if (skipLabel) skipLabel.style.opacity = skipDisabled ? '.45' : '';
+  }
+
+  let parts = split($('t').value, unit);
+  if (unit === 'char' && flag('skip')) parts = parts.filter(p => p.trim());
+  if (rev) parts = [...parts].reverse();
+
+  $('n').textContent = parts.length;
+
+  if (!parts.length) {
+    out.replaceChildren(el('span', 'ph', 'Введите слово или фразу'));
+    chain.replaceChildren();
+    $('l').textContent = 0;
+    $('copy').disabled = true;
+    copyText = '';
+    prev = 0;
+    return;
+  }
+
+  let rows;
+  try {
+    rows = await Promise.all(parts.map(async (g, i) => {
+      const numTag = pos ? (i + 1) + ':' : '';
+      const src = saltFront ? (salt + numTag + g) : (numTag + g + salt);
+      let full = await H(algo, src);
+      if (dbl) full = await H(algo, full);
+      let h = lenVal ? full.substr(off, lenVal) : full.slice(off);
+      if (up) h = h.toUpperCase();
+      return { g, full, h };
+    }));
+  } catch (e) {
+    if (my === seq) out.textContent = 'Ошибка: ' + e.message;
+    return;
+  }
+  if (my !== seq) return;
+
+  let result = rows.map(r => r.h).join(sv);
+  if (hashRes) {
+    result = await H(algo, result);
+    if (up) result = result.toUpperCase();
+  }
+  result = prefix + result + suffix;
+
+  copyText = result;
+  $('l').textContent = result.length;
+  $('copy').disabled = false;
+
+  out.replaceChildren();
+  chain.replaceChildren();
+
+  if (hashRes) {
+    out.append(el('span', 'a', result));
+  } else {
+    rows.forEach((r, i) => {
+      if (i && sv) out.append(el('span', 'sp', sv));
+      out.append(el('span', i % 2 ? 'b' : 'a', r.h));
+    });
+    if (prefix) out.prepend(el('span', 'sp', prefix));
+    if (suffix) out.append(el('span', 'sp', suffix));
+  }
+
+  rows.forEach((r, i) => {
+    const shown = hide ? '•' : (SHOW[r.g] || r.g);
+    const tile = el('button', 'tile' + (i >= prev ? ' new' : ''));
+    tile.type = 'button';
+    tile.setAttribute('aria-label', 'Скопировать хэш символа ' + shown);
+
+    const fp = el('span', 'fp');
+    for (let j = 0; j < 8; j++) {
+      const b = parseInt(r.full.substr(j * 2, 2) || '00', 16);
+      const s = el('i');
+      s.style.background = 'hsl(' + Math.round(b / 255 * 360) + ' 78% 56%)';
+      s.style.animationDelay = (Math.min(i, 12) * 35 + j * 25) + 'ms';
+      fp.append(s);
+    }
+
+    let cps;
+    if (hide) {
+      cps = 'скрыто';
+    } else {
+      const cps_arr = Array.from(r.g);
+      const cps_list = cps_arr.slice(0, 6)
+        .map(c => c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0'));
+      cps = 'U+' + cps_list.join(' ') + (cps_arr.length > 6 ? ' …' : '');
+    }
+
+    tile.append(
+      el('span', 'g', shown),
+      el('span', 'u', cps),
+      fp,
+      el('span', 'h', r.h)
+    );
+    tile.onclick = () => copy(r.h, 'Хэш «' + shown + '» скопирован');
+    chain.append(tile);
+  });
+
+  prev = rows.length;
+  saveHistory($('t').value);
+}
+
+/* ——— Events ——— */
+$('copy').onclick = () => copy(copyText, 'Строка скопирована');
+$('clearBtn').onclick = () => {
+  $('t').value = '';
+  $('s').value = '';
+  $('prefix').value = '';
+  $('suffix').value = '';
+  render();
+};
+$('exportBtn').onclick = () => {
+  if (!copyText) return;
+  const blob = new Blob([copyText], { type: 'text/plain;charset=utf-8' });
+  const a = el('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'char-hash.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  say('Файл скачан');
+};
+
+['t', 's', 'off', 'prefix', 'suffix', 'cs', 'customLen'].forEach(id => {
+  $(id).addEventListener('input', () => {
+    if (id === 'cs') document.querySelector('#sep input[value=custom]').checked = true;
+    if (id === 'customLen') document.querySelector('#len input[value=custom]').checked = true;
+    render();
+  });
+});
+
+render();
+</script>
+</body>
+</html>
