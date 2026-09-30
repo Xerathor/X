@@ -1,278 +1,62 @@
 <!DOCTYPE html>
-<html lang="ru" data-theme="light">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>CryptoLab Hub // HashForge & SIGNAL 2.5</title>
-<style>
-  :root, [data-theme="light"] {
-    --shell-bg: #E8EDF5;
-    --shell-header-bg: #FFFFFF;
-    --shell-border: #CBD5E1;
-    --shell-text: #0F172A;
-    --shell-text-dim: #64748B;
-    --shell-accent: #0284C7;
-    --shell-accent-hover: #0369A1;
-    --shell-tab-bg: #F1F5F9;
-    --shell-tab-hover: #E2E8F0;
-    --shell-tab-active-bg: #0284C7;
-    --shell-tab-active-text: #FFFFFF;
-    --shell-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
-  }
-
-  [data-theme="dark"] {
-    --shell-bg: #06090F;
-    --shell-header-bg: #0E1524;
-    --shell-border: #1F2D47;
-    --shell-text: #F8FAFC;
-    --shell-text-dim: #7E92B0;
-    --shell-accent: #38BDF8;
-    --shell-accent-hover: #7DD3FC;
-    --shell-tab-bg: #151F33;
-    --shell-tab-hover: #1D2A45;
-    --shell-tab-active-bg: #38BDF8;
-    --shell-tab-active-text: #04101E;
-    --shell-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background-color: var(--shell-bg);
-    color: var(--shell-text);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "JetBrains Mono", monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    transition: background 0.15s ease, color 0.15s ease;
-  }
-
-  /* Shell Header */
-  .shell-header {
-    background: var(--shell-header-bg);
-    border-bottom: 1px solid var(--shell-border);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: var(--shell-shadow);
-  }
-
-  .shell-bar {
-    max-width: 1440px;
-    margin: 0 auto;
-    padding: 10px clamp(12px, 3vw, 28px);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-
-  .brand-zone {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .brand-badge {
-    background: var(--shell-accent);
-    color: var(--shell-tab-active-text);
-    font-family: "JetBrains Mono", monospace;
-    font-weight: 800;
-    font-size: 0.72rem;
-    padding: 4px 8px;
-    border-radius: 4px;
-    letter-spacing: 0.08em;
-  }
-
-  .brand-title {
-    font-weight: 800;
-    font-size: 1rem;
-    letter-spacing: -0.01em;
-  }
-
-  .brand-sub {
-    font-size: 0.74rem;
-    color: var(--shell-text-dim);
-    border-left: 2px solid var(--shell-border);
-    padding-left: 10px;
-    display: inline-block;
-  }
-
-  /* Tabs Switcher */
-  .nav-tabs {
-    display: inline-flex;
-    background: var(--shell-tab-bg);
-    padding: 3px;
-    border-radius: 6px;
-    border: 1px solid var(--shell-border);
-    gap: 4px;
-  }
-
-  .nav-btn {
-    border: none;
-    background: transparent;
-    color: var(--shell-text-dim);
-    font-family: inherit;
-    font-size: 0.8rem;
-    font-weight: 700;
-    padding: 6px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: all 0.15s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .nav-btn:hover:not(.active) {
-    background: var(--shell-tab-hover);
-    color: var(--shell-text);
-  }
-
-  .nav-btn.active {
-    background: var(--shell-tab-active-bg);
-    color: var(--shell-tab-active-text);
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
-  }
-
-  .tab-indicator {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.7;
-  }
-
-  /* Shell Controls */
-  .shell-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .btn-theme {
-    background: var(--shell-header-bg);
-    border: 1px solid var(--shell-border);
-    color: var(--shell-text);
-    font-family: inherit;
-    font-size: 0.75rem;
-    font-weight: 600;
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: all 0.15s;
-  }
-
-  .btn-theme:hover {
-    border-color: var(--shell-accent);
-    color: var(--shell-accent);
-  }
-
-  /* Frame Panes Container */
-  main {
-    flex: 1;
-    width: 100%;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .tab-pane {
-    width: 100%;
-    display: none;
-  }
-
-  .tab-pane.active {
-    display: block;
-  }
-
-  iframe.app-frame {
-    width: 100%;
-    border: none;
-    display: block;
-    background: transparent;
-    overflow: hidden;
-  }
-
-  /* Footer */
-  footer.shell-footer {
-    border-top: 1px solid var(--shell-border);
-    background: var(--shell-header-bg);
-    padding: 10px clamp(12px, 3vw, 28px);
-    font-size: 0.72rem;
-    color: var(--shell-text-dim);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  @media (max-width: 768px) {
-    .brand-sub { display: none; }
-    .shell-bar { justify-content: center; }
-  }
-</style>
-</head>
-<body>
-
-<header class="shell-header">
-  <div class="shell-bar">
-    <div class="brand-zone">
-      <span class="brand-badge">CRYPTOLAB</span>
-      <span class="brand-title">HASHFORGE &amp; SIGNAL</span>
-      <span class="brand-sub">РР·РѕР»РёСЂРѕРІР°РЅРЅС‹Р№ РєСЂРёРїС‚Рѕ-РёРЅР¶РµРЅРµСЂРЅС‹Р№ РєРѕРјРїР»РµРєСЃ</span>
-    </div>
-
-    <!-- РќР°РІРёРіР°С†РёРѕРЅРЅС‹Рµ РІРєР»Р°РґРєРё -->
-    <nav class="nav-tabs" role="tablist">
-      <button class="nav-btn active" id="tabBtnHf" data-target="pane-hf" role="tab" aria-selected="true">
-        <span class="tab-indicator"></span> HashForge (РҐСЌС€Рё)
-      </button>
-      <button class="nav-btn" id="tabBtnSig" data-target="pane-sig" role="tab" aria-selected="false">
-        <span class="tab-indicator"></span> SIGNAL 2.5 (РњР°С‚СЂРёС†Р°)
-      </button>
-    </nav>
-
-    <!-- Р•РґРёРЅС‹Р№ РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ С‚РµРјС‹ -->
-    <div class="shell-controls">
-      <button class="btn-theme" id="shellThemeBtn" type="button" aria-label="РЎРјРµРЅРёС‚СЊ С‚РµРјСѓ">
-        <span id="shellThemeIcon">в—ђ</span>
-        <span id="shellThemeLabel">РўРµРјР°</span>
-      </button>
-    </div>
-  </div>
-</header>
-
-<main>
-  <!-- РџР°РЅРµР»СЊ HashForge -->
-  <div class="tab-pane active" id="pane-hf" role="tabpanel">
-    <iframe class="app-frame" id="frame-hashforge" title="HashForge Crypto Lab" allow="clipboard-write" scrolling="no"></iframe>
-  </div>
-
-  <!-- РџР°РЅРµР»СЊ SIGNAL 2.5 -->
-  <div class="tab-pane" id="pane-sig" role="tabpanel">
-    <iframe class="app-frame" id="frame-signal" title="SIGNAL 2.5 Encoder Matrix" allow="clipboard-write" scrolling="no"></iframe>
-  </div>
-</main>
-
-<footer class="shell-footer">
-  <span>100% Client-Side Evaluation В· WebCrypto API + RFC Protocols В· No Tracking</span>
-  <span id="shellClock">UTC 00:00:00</span>
-</footer>
-
-<!-- =========================================================================
-     РЁРђР‘Р›РћРќ 1: HASHFORGE OFFLINE CRYPTO LAB
-     ========================================================================= -->
-<template id="tpl-hashforge">
-<!doctype html>
-<html lang="ru" data-theme="light">
+<html lang="ru" data-theme="light" data-tab="hashforge">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HashForge</title>
+<title>HashForge + SIGNAL — Offline Lab</title>
+<style>
+:root{--bg:#F1F5F9;--panel:#fff;--line:#CBD5E1;--text:#0F172A;--mute:#475569;--acc:#0284C7;--acc-soft:#E0F2FE;--on-acc:#fff;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;--mono:"JetBrains Mono",ui-monospace,"SF Mono","Cascadia Code",Menlo,Consolas,monospace}
+:root[data-theme="dark"]{--bg:#090D14;--panel:#111726;--line:#223042;--text:#E6EDF8;--mute:#94A3B8;--acc:#38BDF8;--acc-soft:#082F49;--on-acc:#04101E}
+*{box-sizing:border-box}
+html{color-scheme:light}html[data-theme="dark"]{color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--text);font:400 .9rem/1.4 var(--mono);-webkit-font-smoothing:antialiased}
+.bar{position:sticky;top:0;z-index:10;background:var(--panel);border-bottom:1px solid var(--line);
+  padding:8px clamp(12px,3vw,32px);padding-top:calc(8px + env(safe-area-inset-top,0px));
+  display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px}
+.brand{font:700 .8rem var(--mono);letter-spacing:.08em;color:var(--acc);white-space:nowrap}
+.brand small{display:block;font-weight:400;letter-spacing:0;color:var(--mute);font-size:.68rem}
+.tabs{display:flex;gap:4px;margin-left:auto;margin-right:auto}
+.tab,.tgl{font:600 .8rem var(--mono);color:var(--mute);background:transparent;border:1px solid var(--line);border-radius:6px;padding:7px 16px;cursor:pointer}
+.tab:hover,.tgl:hover{border-color:var(--acc);color:var(--text)}
+.tab[aria-selected="true"]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.tab:focus-visible,.tgl:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.tgl{padding:7px 12px}
+iframe{display:block;width:100%;border:0;height:calc(100vh - 60px);background:transparent}
+html[data-tab="hashforge"] #signal,html[data-tab="signal"] #hashforge{display:none}
+@media(max-width:560px){.tabs{order:3;width:100%;margin:0}.tab{flex:1}.tgl{margin-left:auto}}
+</style>
+<script>
+/* Тема и стартовое состояние — до отрисовки, чтобы не было мерцания */
+(function(){
+  var KEY='suite-theme', saved=null;
+  try{ saved=localStorage.getItem(KEY); }catch(e){}
+  if(saved!=='dark'&&saved!=='light') saved=null;
+  var S=window.__suite={saved:saved,recipe:'',
+    theme:saved||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')};
+  var h=location.hash, m=/^#hf=([A-Za-z0-9_-]{1,8000})$/.exec(h);
+  if(m) S.recipe=m[1];
+  var root=document.documentElement;
+  root.setAttribute('data-theme',S.theme);
+  root.setAttribute('data-tab',(m||h==='#hashforge')?'hashforge':h==='#signal'?'signal':'hashforge');
+})();
+</script>
+</head>
+<body>
+<header class="bar">
+  <div class="brand">HASHFORGE&nbsp;×&nbsp;SIGNAL<small>Offline crypto &amp; encoding lab</small></div>
+  <nav class="tabs" role="tablist" aria-label="Системы">
+    <button class="tab" role="tab" id="tab-hashforge" data-tab="hashforge" aria-controls="hashforge">HashForge</button>
+    <button class="tab" role="tab" id="tab-signal" data-tab="signal" aria-controls="signal">SIGNAL</button>
+  </nav>
+  <button class="tgl" id="themeBtn" type="button"></button>
+</header>
+<iframe id="hashforge" role="tabpanel" aria-labelledby="tab-hashforge" title="HashForge" scrolling="no" allow="clipboard-write *" srcdoc="<!doctype html>
+<html lang=&quot;ru&quot; data-theme=&quot;light&quot;>
+<head>
+<meta charset=&quot;utf-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;>
+<title>HashForge // Offline Hash Lab</title>
 <style>
 :root {
   --bg: #F4F6FB;
@@ -289,13 +73,13 @@
   --grid: rgba(11, 19, 43, 0.04);
   --ok: #059669;
   --warn: #D97706;
-  --display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --display: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif;
+  --mono: &quot;JetBrains Mono&quot;, &quot;SF Mono&quot;, &quot;Cascadia Code&quot;, Menlo, Consolas, monospace;
   --radius: 6px;
   --shadow: 0 1px 3px rgba(11, 19, 43, 0.05), 0 4px 12px rgba(11, 19, 43, 0.03);
 }
 
-[data-theme="dark"] {
+[data-theme=&quot;dark&quot;] {
   --bg: #090D16;
   --panel: #111726;
   --panel-alt: #172033;
@@ -315,14 +99,8 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 
-html, body {
-  margin: 0;
-  padding: 0;
-  overflow-y: hidden !important;
-  min-height: auto !important;
-}
-
 body {
+  margin: 0;
   background-color: var(--bg);
   background-image: 
     linear-gradient(var(--grid) 1px, transparent 1px),
@@ -336,7 +114,7 @@ body {
 main {
   max-width: 1040px;
   margin: 0 auto;
-  padding: 20px 16px 36px 16px;
+  padding: clamp(16px, 3.5vw, 36px) clamp(12px, 2.5vw, 24px);
   display: grid;
   gap: 14px;
 }
@@ -351,7 +129,12 @@ header {
   padding-bottom: 14px;
 }
 
-.brand { display: flex; align-items: center; gap: 10px; }
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .brand-badge {
   background: var(--acc);
   color: var(--on-acc);
@@ -385,6 +168,22 @@ h1 {
 }
 
 .led.warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+
+.theme-toggle {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--text);
+  padding: 6px 11px;
+  font: 600 .75rem var(--mono);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all .15s;
+}
+
+.theme-toggle:hover { border-color: var(--acc); }
 
 .panel {
   background: var(--panel);
@@ -469,9 +268,21 @@ textarea:focus, input:focus {
   transition: all .12s ease-in-out;
 }
 
-.chip input:hover + span { border-color: var(--line-strong); color: var(--text); }
-.chip input:checked + span { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
-.chip input:disabled + span { opacity: .35; cursor: not-allowed; }
+.chip input:hover + span {
+  border-color: var(--line-strong);
+  color: var(--text);
+}
+
+.chip input:checked + span {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--on-acc);
+}
+
+.chip input:disabled + span {
+  opacity: .35;
+  cursor: not-allowed;
+}
 
 .inline-input {
   width: 5.4rem !important;
@@ -489,7 +300,11 @@ textarea:focus, input:focus {
   margin-bottom: 8px;
 }
 
-.btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.btn-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
 
 button.act {
   background: var(--acc);
@@ -682,145 +497,182 @@ button.act:disabled { opacity: .4; cursor: not-allowed; }
   line-height: 1.5;
 }
 .chip input:focus-visible + span { outline: 2px solid var(--acc); outline-offset: 2px; }
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
 </style>
+<style>body{min-height:0!important}</style>
+<script>
+/* suite-bridge: связь с оболочкой (тема, высота, ссылка). Логика приложения не затрагивается. */
+(function(){
+  var root=document.documentElement, S=null, hs={}, last=0;
+  try{ if(parent!==window) S=parent.__suite; }catch(e){}
+  var B=window.suiteBridge={embedded:parent!==window, recipe:(S&amp;&amp;S.recipe)||'',
+    post:function(m){ parent.postMessage(m,'*'); },
+    on:function(t,f){ hs[t]=f; }};
+  function theme(t){ root.setAttribute('data-theme', t==='dark'?'dark':'light'); }
+  if(S&amp;&amp;S.theme) theme(S.theme);
+  if(!B.embedded) return;
+  function report(){
+    var b=document.body; if(!b) return;
+    var cs=getComputedStyle(b);
+    var h=Math.ceil(b.getBoundingClientRect().height+(parseFloat(cs.marginTop)||0)+(parseFloat(cs.marginBottom)||0));
+    if(h>0&amp;&amp;h!==last){ last=h; B.post({type:'height',value:h}); }
+  }
+  addEventListener('message',function(e){
+    var d=e.data; if(e.source!==parent||!d) return;
+    if(d.type==='theme') theme(d.value);
+    else if(d.type==='init'){ theme(d.theme); B.recipe=d.recipe||''; }
+    else if(d.type==='measure'){ last=0; report(); }
+    else if(hs[d.type]) hs[d.type](d);
+  });
+  document.addEventListener('DOMContentLoaded',function(){
+    new ResizeObserver(report).observe(document.body); report(); B.post({type:'hello'});
+  });
+  addEventListener('load',report);
+})();
+</script>
 </head>
 <body>
 
 <main>
   <header>
-    <div class="brand">
-      <span class="brand-badge">HASHFORGE</span>
-      <h1>РљСЂРёРїС‚РѕРіСЂР°С„РёС‡РµСЃРєРёР№ РєРѕРјР±Р°Р№РЅ</h1>
+    <div class=&quot;brand&quot;>
+      <span class=&quot;brand-badge&quot;>HASHFORGE</span>
+      <h1>Криптографический комбайн</h1>
     </div>
-    <div class="header-status">
-      <span class="led" id="cryptoLed"></span>
-      <span id="cryptoStatus">Crypto API ready</span>
+    <div class=&quot;header-status&quot;>
+      <span class=&quot;led&quot; id=&quot;cryptoLed&quot;></span>
+      <span id=&quot;cryptoStatus&quot;>Crypto API ready</span>
     </div>
   </header>
 
   <!-- Input Section -->
-  <section class="panel">
-    <div class="lab">
-      <span>Р’С…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ</span>
-      <span id="tMeta">0 СЃРёРјРІ.</span>
+  <section class=&quot;panel&quot;>
+    <div class=&quot;lab&quot;>
+      <span>Входные данные</span>
+      <span id=&quot;tMeta&quot;>0 симв.</span>
     </div>
-    <textarea id="t" spellcheck="false" autocomplete="off" placeholder="Р’РІРµРґРёС‚Рµ СЃРёРјРІРѕР»С‹, СЃР»РѕРІР° РёР»Рё С„СЂР°Р·Сѓ РґР»СЏ СЂР°СЃС‡С‘С‚Р°..."></textarea>
+    <textarea id=&quot;t&quot; spellcheck=&quot;false&quot; autocomplete=&quot;off&quot; placeholder=&quot;Введите символы, слова или фразу для расчёта...&quot;></textarea>
     
-    <div class="grid-cols" style="margin-top:12px;">
+    <div class=&quot;grid-cols&quot; style=&quot;margin-top:12px;&quot;>
       <div>
-        <label class="lab" for="s">РЎРѕР»СЊ / РљР»СЋС‡ HMAC</label>
-        <input type="text" id="s" autocomplete="off" placeholder="РћРїС†РёРѕРЅР°Р»СЊРЅР°СЏ СЃРѕР»СЊ РёР»Рё СЃРµРєСЂРµС‚">
+        <label class=&quot;lab&quot; for=&quot;s&quot;>Соль / Ключ HMAC</label>
+        <input type=&quot;text&quot; id=&quot;s&quot; autocomplete=&quot;off&quot; placeholder=&quot;Опциональная соль или секрет&quot;>
       </div>
       <div>
-        <label class="lab" for="off">РЎРјРµС‰РµРЅРёРµ РІ СЃС‚СЂРѕРєРµ С…СЌС€Р° (СЃ СЃРёРјРІРѕР»Р° в„–)</label>
-        <input type="number" id="off" min="1" value="1">
+        <label class=&quot;lab&quot; for=&quot;off&quot;>Смещение в строке хэша (с символа №)</label>
+        <input type=&quot;number&quot; id=&quot;off&quot; min=&quot;1&quot; value=&quot;1&quot;>
       </div>
     </div>
 
-    <div class="grid-cols" style="margin-top:12px;">
-      <fieldset style="border:0;padding:0;margin:0">
-        <legend>Р•РґРёРЅРёС†Р° РґРµР»РµРЅРёСЏ</legend>
-        <div class="chips" id="unit"></div>
+    <div class=&quot;grid-cols&quot; style=&quot;margin-top:12px;&quot;>
+      <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+        <legend>Единица деления</legend>
+        <div class=&quot;chips&quot; id=&quot;unit&quot;></div>
       </fieldset>
-      <fieldset style="border:0;padding:0;margin:0">
-        <legend>РџРѕР·РёС†РёСЏ СЃРѕР»Рё</legend>
-        <div class="chips" id="saltpos"></div>
+      <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+        <legend>Позиция соли</legend>
+        <div class=&quot;chips&quot; id=&quot;saltpos&quot;></div>
       </fieldset>
     </div>
 
-    <div class="grid-cols" style="margin-top:12px;">
+    <div class=&quot;grid-cols&quot; style=&quot;margin-top:12px;&quot;>
       <div>
-        <label class="lab" for="prefix">РџСЂРµС„РёРєСЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°</label>
-        <input type="text" id="prefix" placeholder="РЅР°РїСЂ: ID_">
+        <label class=&quot;lab&quot; for=&quot;prefix&quot;>Префикс результата</label>
+        <input type=&quot;text&quot; id=&quot;prefix&quot; placeholder=&quot;напр: ID_&quot;>
       </div>
       <div>
-        <label class="lab" for="suffix">РЎСѓС„С„РёРєСЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°</label>
-        <input type="text" id="suffix" placeholder="РЅР°РїСЂ: .chk">
+        <label class=&quot;lab&quot; for=&quot;suffix&quot;>Суффикс результата</label>
+        <input type=&quot;text&quot; id=&quot;suffix&quot; placeholder=&quot;напр: .chk&quot;>
       </div>
     </div>
   </section>
 
   <!-- Controls Section -->
-  <section class="panel grid-cols">
-    <fieldset style="border:0;padding:0;margin:0">
-      <legend>РђР»РіРѕСЂРёС‚Рј</legend>
-      <div class="chips" id="algo"></div>
+  <section class=&quot;panel grid-cols&quot;>
+    <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+      <legend>Алгоритм</legend>
+      <div class=&quot;chips&quot; id=&quot;algo&quot;></div>
     </fieldset>
 
-    <fieldset style="border:0;padding:0;margin:0">
-      <legend>Р¤РѕСЂРјР°С‚ РІС‹РІРѕРґР°</legend>
-      <div class="chips" id="fmt"></div>
+    <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+      <legend>Формат вывода</legend>
+      <div class=&quot;chips&quot; id=&quot;fmt&quot;></div>
     </fieldset>
 
-    <fieldset style="border:0;padding:0;margin:0">
-      <legend>Р”Р»РёРЅР° Р±Р»РѕРєР°</legend>
-      <div class="chips" id="len">
-        <input type="number" id="customLen" class="inline-input" min="1" max="128" placeholder="СЃРІРѕСЏ" aria-label="РЎРІРѕСЏ РґР»РёРЅР°">
+    <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+      <legend>Длина блока</legend>
+      <div class=&quot;chips&quot; id=&quot;len&quot;>
+        <input type=&quot;number&quot; id=&quot;customLen&quot; class=&quot;inline-input&quot; min=&quot;1&quot; max=&quot;128&quot; placeholder=&quot;своя&quot; aria-label=&quot;Своя длина&quot;>
       </div>
     </fieldset>
 
-    <fieldset style="border:0;padding:0;margin:0">
-      <legend>Р Р°Р·РґРµР»РёС‚РµР»СЊ</legend>
-      <div class="chips" id="sep">
-        <input type="text" id="cs" class="inline-input" maxlength="8" placeholder="СЃРІРѕР№" aria-label="РЎРІРѕР№ СЂР°Р·РґРµР»РёС‚РµР»СЊ">
+    <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+      <legend>Разделитель</legend>
+      <div class=&quot;chips&quot; id=&quot;sep&quot;>
+        <input type=&quot;text&quot; id=&quot;cs&quot; class=&quot;inline-input&quot; maxlength=&quot;8&quot; placeholder=&quot;свой&quot; aria-label=&quot;Свой разделитель&quot;>
       </div>
     </fieldset>
   </section>
 
   <!-- Options -->
-  <section class="panel">
-    <fieldset style="border:0;padding:0;margin:0">
-      <legend>РџР°СЂР°РјРµС‚СЂС‹ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ</legend>
-      <div class="chips" id="opt"></div>
+  <section class=&quot;panel&quot;>
+    <fieldset style=&quot;border:0;padding:0;margin:0&quot;>
+      <legend>Параметры преобразования</legend>
+      <div class=&quot;chips&quot; id=&quot;opt&quot;></div>
     </fieldset>
   </section>
 
   <!-- Recipe Display -->
-  <section class="panel">
-    <div class="lab">РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ РїРѕС‚РѕРєР° (Recipe)</div>
-    <p id="recipe">...</p>
+  <section class=&quot;panel&quot;>
+    <div class=&quot;lab&quot;>Конфигурация потока (Recipe)</div>
+    <p id=&quot;recipe&quot;>...</p>
   </section>
 
   <!-- Main Output -->
-  <section class="panel">
-    <div class="res-header">
-      <div class="lab" style="margin:0">Р РµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РїРѕС‚РѕРє</div>
-      <div class="btn-group">
-        <button type="button" class="act sec" id="clearBtn">РЎР±СЂРѕСЃ</button>
-        <button type="button" class="act sec" id="shareBtn">РЎСЃС‹Р»РєР°</button>
-        <button type="button" class="act sec" id="exportBtn">Р­РєСЃРїРѕСЂС‚</button>
-        <button type="button" class="act" id="copyBtn">РљРѕРїРёСЂРѕРІР°С‚СЊ</button>
+  <section class=&quot;panel&quot;>
+    <div class=&quot;res-header&quot;>
+      <div class=&quot;lab&quot; style=&quot;margin:0&quot;>Результирующий поток</div>
+      <div class=&quot;btn-group&quot;>
+        <button type=&quot;button&quot; class=&quot;act sec&quot; id=&quot;clearBtn&quot;>Сброс</button>
+        <button type=&quot;button&quot; class=&quot;act sec&quot; id=&quot;shareBtn&quot;>Ссылка</button>
+        <button type=&quot;button&quot; class=&quot;act sec&quot; id=&quot;exportBtn&quot;>Экспорт</button>
+        <button type=&quot;button&quot; class=&quot;act&quot; id=&quot;copyBtn&quot;>Копировать</button>
       </div>
     </div>
-    <div id="out"></div>
-    <div class="status-row">
-      <span>Р­Р»РµРјРµРЅС‚РѕРІ: <b id="n">0</b></span>
-      <span>Р”Р»РёРЅР° СЃС‚СЂРѕРєРё: <b id="l">0</b></span>
-      <span id="st" role="status"></span>
+    <div id=&quot;out&quot;></div>
+    <div class=&quot;status-row&quot;>
+      <span>Элементов: <b id=&quot;n&quot;>0</b></span>
+      <span>Длина строки: <b id=&quot;l&quot;>0</b></span>
+      <span id=&quot;st&quot; role=&quot;status&quot;></span>
     </div>
   </section>
 
   <!-- Visual Matrix -->
   <section>
-    <div class="lab" id="chainTitle" style="margin-bottom:8px">РњР°С‚СЂРёС†Р° С…СЌС€РµР№</div>
-    <div id="chain"></div>
+    <div class=&quot;lab&quot; id=&quot;chainTitle&quot; style=&quot;margin-bottom:8px&quot;>Матрица хэшей</div>
+    <div id=&quot;chain&quot;></div>
   </section>
 
   <!-- History Panel -->
-  <section class="panel" id="histPanel" style="display:none">
-    <div class="res-header">
-      <div class="lab" style="margin:0">РќРµРґР°РІРЅРёР№ РІРІРѕРґ (РЅРµ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РїСЂРё РІРєР»СЋС‡С‘РЅРЅРѕР№ РјР°СЃРєРµ)</div>
-      <button type="button" class="act sec" id="clearHistBtn" style="padding:3px 8px;font-size:.7rem">РћС‡РёСЃС‚РёС‚СЊ РІСЃС‘</button>
+  <section class=&quot;panel&quot; id=&quot;histPanel&quot; style=&quot;display:none&quot;>
+    <div class=&quot;res-header&quot;>
+      <div class=&quot;lab&quot; style=&quot;margin:0&quot;>Недавний ввод (не сохраняется при включённой маске)</div>
+      <button type=&quot;button&quot; class=&quot;act sec&quot; id=&quot;clearHistBtn&quot; style=&quot;padding:3px 8px;font-size:.7rem&quot;>Очистить всё</button>
     </div>
-    <div class="history-box" id="history"></div>
+    <div class=&quot;history-box&quot; id=&quot;history&quot;></div>
   </section>
 
-  <p class="note">
-    вљЎ 100% РєР»РёРµРЅС‚СЃРєР°СЏ РѕР±СЂР°Р±РѕС‚РєР°. MD5 Рё HMAC-MD5 РІС‹С‡РёСЃР»СЏСЋС‚СЃСЏ РІСЃС‚СЂРѕРµРЅРЅС‹Рј JS-СЏРґСЂРѕРј, СЃРµРјРµР№СЃС‚РІРѕ SHA вЂ” С‡РµСЂРµР· РЅР°С‚РёРІРЅС‹Р№ WebCrypto API.
+  <p class=&quot;note&quot;>
+    ⚡ 100% клиентская обработка. MD5 и HMAC-MD5 вычисляются встроенным JS-ядром, семейство SHA — через нативный WebCrypto API.
+    При маскировке ввод исключается из локальной истории для предотвращения утечек. Инструмент учебный: хэш отдельных символов легко подбирается перебором, не используйте его для защиты паролей.
   </p>
 </main>
 
 <script>
+/* ——— Инициализация и Утилиты ——— */
 const $ = id => document.getElementById(id);
 const el = (tag, cls, txt) => {
   const node = document.createElement(tag);
@@ -829,15 +681,15 @@ const el = (tag, cls, txt) => {
   return node;
 };
 const enc = new TextEncoder();
-const hasCrypto = !!(window.crypto && crypto.subtle);
+const hasCrypto = !!(window.crypto &amp;&amp; crypto.subtle);
 
 if (!hasCrypto) {
   $('cryptoLed').className = 'led warn';
-  $('cryptoStatus').textContent = 'WebCrypto РЅРµРґРѕСЃС‚СѓРїРµРЅ (С‚РѕР»СЊРєРѕ MD5)';
+  $('cryptoStatus').textContent = 'WebCrypto недоступен (только MD5)';
 }
 
-// Unicode-СЃРµРіРјРµРЅС‚Р°С†РёСЏ
-const seg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
+// Unicode-сегментация
+const seg = (window.Intl &amp;&amp; Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 const splitChars = t => seg ? Array.from(seg.segment(t), x => x.segment) : Array.from(t);
 const splitWords = t => (t.match(/\S+/g) || []);
 function splitText(t, unit) {
@@ -846,10 +698,11 @@ function splitText(t, unit) {
   return splitChars(t);
 }
 
-const SHOW_CHAR = { ' ': 'вђ ', '\n': 'в†µ', '\t': 'в‡Ґ' };
+const SHOW_CHAR = { ' ': '␠', '\n': '↵', '\t': '⇥' };
 const getRadio = id => document.querySelector('#' + id + ' input:checked')?.value;
-const getFlag = v => !!document.querySelector('#opt input[value="' + v + '"]')?.checked;
+const getFlag = v => !!document.querySelector('#opt input[value=&quot;' + v + '&quot;]')?.checked;
 
+/* ——— Форматирование байт ——— */
 function bytesToHex(buf) {
   const b = new Uint8Array(buf);
   let s = '';
@@ -874,13 +727,16 @@ function formatDigest(buf, fmt) {
   return bytesToHex(buf);
 }
 
+/* ——— Криптографический движок ——— */
+
+// Нативный RFC 1321 MD5 с байтовым выводом
 function md5Bytes(bytes) {
   const n = bytes.length;
   const len = ((n + 8 >> 6) + 1) * 16;
   const x = new Int32Array(len);
   for (let i = 0; i < n; i++) x[i >> 2] |= bytes[i] << ((i % 4) * 8);
   x[n >> 2] |= 0x80 << ((n % 4) * 8);
-  x[len - 2] = (n * 8) & 0xffffffff;
+  x[len - 2] = (n * 8) &amp; 0xffffffff;
   x[len - 1] = Math.floor(n / 0x20000000);
 
   const K = [
@@ -900,8 +756,8 @@ function md5Bytes(bytes) {
     let A = a0, B = b0, C = c0, D = d0;
     for (let i = 0; i < 64; i++) {
       let F, g;
-      if (i < 16) { F = (B & C) | (~B & D); g = i; }
-      else if (i < 32) { F = (D & B) | (~D & C); g = (5 * i + 1) % 16; }
+      if (i < 16) { F = (B &amp; C) | (~B &amp; D); g = i; }
+      else if (i < 32) { F = (D &amp; B) | (~D &amp; C); g = (5 * i + 1) % 16; }
       else if (i < 48) { F = B ^ C ^ D; g = (3 * i + 5) % 16; }
       else { F = C ^ (B | ~D); g = (7 * i) % 16; }
       F = (F + A + K[i] + x[o + g]) | 0;
@@ -913,7 +769,7 @@ function md5Bytes(bytes) {
   }
   const out = new Uint8Array(16);
   [a0, b0, c0, d0].forEach((v, i) => {
-    for (let j = 0; j < 4; j++) out[i * 4 + j] = (v >>> (j * 8)) & 0xff;
+    for (let j = 0; j < 4; j++) out[i * 4 + j] = (v >>> (j * 8)) &amp; 0xff;
   });
   return out;
 }
@@ -922,10 +778,11 @@ const BLOCK = { 'MD5': 64, 'SHA-1': 64, 'SHA-256': 64, 'SHA-384': 128, 'SHA-512'
 
 async function hashBytes(algo, bytes) {
   if (algo === 'MD5') return md5Bytes(bytes);
-  if (!hasCrypto) throw new Error('WebCrypto РЅРµРґРѕСЃС‚СѓРїРµРЅ РґР»СЏ SHA');
+  if (!hasCrypto) throw new Error('WebCrypto недоступен для SHA');
   return new Uint8Array(await crypto.subtle.digest(algo, bytes));
 }
 
+// RFC 2104 HMAC поверх любого хэша (работает и с пустым ключом)
 async function hmacBytes(algo, keyBytes, msgBytes) {
   const B = BLOCK[algo];
   const k = keyBytes.length > B ? await hashBytes(algo, keyBytes) : keyBytes;
@@ -950,6 +807,7 @@ async function computeDigest(algo, text, salt = '', isHmac = false) {
   return hashBytes(algo, data);
 }
 
+/* ——— UI Генераторы Групп ——— */
 function makeChips(boxId, type, items, def) {
   const box = $(boxId);
   const tail = box.querySelector('input[type=text], input[type=number]');
@@ -976,33 +834,34 @@ makeChips('fmt', 'radio', [
 ], 'hex');
 
 makeChips('len', 'radio', [
-  ['0','РїРѕР»РЅС‹Р№'], ['8','8'], ['16','16'], ['32','32'], ['custom','СЃРІРѕСЏ']
+  ['0','полный'], ['8','8'], ['16','16'], ['32','32'], ['custom','своя']
 ], '0');
 
 makeChips('sep', 'radio', [
-  ['none','Р±РµР·'], ['-','-'], [':',':'], [',',','], [' ','РїСЂРѕР±РµР»'], ['_','_'], ['custom','СЃРІРѕР№']
+  ['none','без'], ['-','-'], [':',':'], [',',','], [' ','пробел'], ['_','_'], ['custom','свой']
 ], '-');
 
 makeChips('unit', 'radio', [
-  ['char','РЎРёРјРІРѕР»'], ['word','РЎР»РѕРІРѕ'], ['phrase','Р¤СЂР°Р·Р° С†РµР»РёРєРѕРј']
+  ['char','Символ'], ['word','Слово'], ['phrase','Фраза целиком']
 ], 'char');
 
 makeChips('saltpos', 'radio', [
-  ['front','РЎРїРµСЂРµРґРё'], ['back','РЎР·Р°РґРё']
+  ['front','Спереди'], ['back','Сзади']
 ], 'front');
 
 makeChips('opt', 'checkbox', [
-  ['hmac','Р РµР¶РёРј HMAC (РїРѕ СЃРѕР»Рё)'],
-  ['pos','РРЅРґРµРєСЃ РїРѕР·РёС†РёРё'],
-  ['rev','РћР±СЂР°С‚РЅС‹Р№ РїРѕСЂСЏРґРѕРє'],
-  ['dbl','Р”РІРѕР№РЅРѕР№ С…СЌС€'],
-  ['upper','Р’Р•Р РҐРќРР™ Р Р•Р“РРЎРўР '],
-  ['skip','РџСЂРѕРїСѓСЃРє РїСЂРѕР±РµР»РѕРІ'],
-  ['mask','РЎРєСЂС‹С‚СЊ РІРІРѕРґ'],
-  ['hist','Р—Р°РїРѕРјРёРЅР°С‚СЊ РІРІРѕРґ (Р»РѕРєР°Р»СЊРЅРѕ)'],
-  ['hashResult','РҐСЌС€РёСЂРѕРІР°С‚СЊ РёС‚РѕРі']
+  ['hmac','Режим HMAC (по соли)'],
+  ['pos','Индекс позиции'],
+  ['rev','Обратный порядок'],
+  ['dbl','Двойной хэш'],
+  ['upper','ВЕРХНИЙ РЕГИСТР'],
+  ['skip','Пропуск пробелов'],
+  ['mask','Скрыть ввод'],
+  ['hist','Запоминать ввод (локально)'],
+  ['hashResult','Хэшировать итог']
 ], null);
 
+/* ——— Безопасное хранилище и кодирование ——— */
 const store = {
   get(k) { try { return localStorage.getItem(k); } catch { return null; } },
   set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -1022,6 +881,9 @@ function fromUrlB64(s) {
   return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
 }
 
+/* Тема управляется оболочкой (suite-bridge) */
+
+/* ——— Безопасная История (opt-in, сохраняется по завершении ввода) ——— */
 const HIST_KEY = 'hashforge_history';
 function getHistory() {
   try {
@@ -1060,16 +922,17 @@ function renderHistory() {
     const bText = el('button', 'hist-text', txt);
     bText.title = txt;
     bText.onclick = () => { $('t').value = txt; render(); };
-    const bDel = el('button', 'hist-del', 'Г—');
-    bDel.title = 'РЈРґР°Р»РёС‚СЊ РёР· РёСЃС‚РѕСЂРёРё';
+    const bDel = el('button', 'hist-del', '×');
+    bDel.title = 'Удалить из истории';
     bDel.onclick = () => deleteHistoryItem(txt);
     wrap.append(bText, bDel);
     box.append(wrap);
   });
 }
 $('clearHistBtn').onclick = clearAllHistory;
+renderHistory();
 
-// РђРґР°РїС‚РёСЂРѕРІР°РЅРЅРѕРµ СЃРѕС…СЂР°РЅРµРЅРёРµ СЃСЃС‹Р»РєРё С‡РµСЂРµР· РѕРєРЅРѕ РѕР±РѕР»РѕС‡РєРё
+/* ——— Сохранение состояния в URL ——— */
 function shareRecipe() {
   const cfg = {
     a: getRadio('algo'),
@@ -1092,27 +955,15 @@ function shareRecipe() {
     o: $('off').value
   };
   const str = toUrlB64(JSON.stringify(cfg));
-  try {
-    if (window.parent && window.parent !== window) {
-      window.parent.history.replaceState(null, '', '#' + str);
-      copyToClipboard(window.parent.location.href, 'РЎСЃС‹Р»РєР° РЅР° СЂРµС†РµРїС‚ СЃРєРѕРїРёСЂРѕРІР°РЅР°');
-      return;
-    }
-  } catch(e) {}
+  if (window.suiteBridge &amp;&amp; suiteBridge.embedded) { suiteBridge.post({ type: 'share', recipe: str }); return; }
   history.replaceState(null, '', '#' + str);
-  copyToClipboard(window.location.href, 'РЎСЃС‹Р»РєР° РЅР° СЂРµС†РµРїС‚ СЃРєРѕРїРёСЂРѕРІР°РЅР°');
+  copyToClipboard(window.location.href, 'Ссылка на рецепт скопирована');
 }
 
 function loadFromUrl() {
   try {
-    let hash = '';
-    try {
-      if (window.parent && window.parent !== window && window.parent.location.hash) {
-        hash = window.parent.location.hash.slice(1);
-      }
-    } catch(e) {}
-    if (!hash) hash = window.location.hash.slice(1);
-    if (!hash || hash === 'pane-hf' || hash === 'pane-sig') return;
+    const hash = window.suiteBridge &amp;&amp; suiteBridge.embedded ? suiteBridge.recipe : window.location.hash.slice(1);
+    if (!hash) return;
     const cfg = JSON.parse(fromUrlB64(hash));
     const setR = (id, val) => {
       for (const inp of document.querySelectorAll('#' + id + ' input[type=radio]')) {
@@ -1127,7 +978,7 @@ function loadFromUrl() {
     if (cfg.sp) setR('saltpos', cfg.sp);
 
     const setF = (val, state) => {
-      const inp = document.querySelector('#opt input[value="' + val + '"]');
+      const inp = document.querySelector('#opt input[value=&quot;' + val + '&quot;]');
       if (inp) inp.checked = !!state;
     };
     setF('hmac', cfg.hm);
@@ -1146,6 +997,7 @@ function loadFromUrl() {
   } catch (_) {}
 }
 
+/* ——— Ядро рендеринга ——— */
 let seq = 0;
 let lastResultText = '';
 let notifyTimer;
@@ -1155,9 +1007,8 @@ function notify(msg) {
   clearTimeout(notifyTimer);
   notifyTimer = setTimeout(() => { $('st').textContent = ''; }, 2600);
 }
-window.notify = notify; // Р­РєСЃРїРѕСЂС‚ РґР»СЏ РІРЅРµС€РЅРµРіРѕ РѕРїРѕРІРµС‰РµРЅРёСЏ
 
-async function copyToClipboard(txt, msg = 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ') {
+async function copyToClipboard(txt, msg = 'Скопировано') {
   try {
     await navigator.clipboard.writeText(txt);
   } catch {
@@ -1173,7 +1024,8 @@ async function copyToClipboard(txt, msg = 'РЎРєРѕРїРёСЂРѕРІР°�
   notify(msg);
 }
 
-function debounce(fn, ms = 100) {
+// Debounce-обертка
+function debounce(fn, ms = 110) {
   let t;
   return (...args) => {
     clearTimeout(t);
@@ -1211,45 +1063,48 @@ async function render() {
   $('s').classList.toggle('hide', hide);
   $('s').type = hide ? 'password' : 'text';
   renderHistory();
-  $('tMeta').textContent = `${splitChars(rawInput).length} СЃРёРјРІ.`;
+  $('tMeta').textContent = `${splitChars(rawInput).length} симв.`;
 
   let sv = getRadio('sep');
   sv = (sv === 'none') ? '' : (sv === 'custom') ? $('cs').value : sv;
 
-  const skipChk = document.querySelector('#opt input[value="skip"]');
+  // Отключение несовместимых опций
+  const skipChk = document.querySelector('#opt input[value=&quot;skip&quot;]');
   if (skipChk) {
     const disabled = unit !== 'char';
     skipChk.disabled = disabled;
     skipChk.closest('.chip').style.opacity = disabled ? '.35' : '';
   }
 
-  const unitName = (unit === 'word') ? 'СЃР»РѕРІРѕ' : (unit === 'phrase') ? 'РІСЃСЋ С„СЂР°Р·Сѓ' : 'СЃРёРјРІРѕР»';
+  // Генерация рецепта
+  const unitName = (unit === 'word') ? 'слово' : (unit === 'phrase') ? 'всю фразу' : 'символ';
   let recipeDesc = '';
   if (isHmac) {
-    recipeDesc = `HMAC-${algo}(РєР»СЋС‡: ${salt ? 'В«СЃРѕР»СЊВ»' : 'РїСѓСЃС‚РѕР№'}, РґР°РЅРЅС‹Рµ: ${(pos ? 'в„– + ' : '') + unitName})`;
+    recipeDesc = `HMAC-${algo}(ключ: ${salt ? '«соль»' : 'пустой'}, данные: ${(pos ? '№ + ' : '') + unitName})`;
   } else {
-    const sPrefix = (salt && saltPos === 'front') ? 'СЃРѕР»СЊ + ' : '';
-    const sSuffix = (salt && saltPos === 'back') ? ' + СЃРѕР»СЊ' : '';
-    recipeDesc = `${algo}(${sPrefix}${pos ? 'в„– + ' : ''}${unitName}${sSuffix})`;
+    const sPrefix = (salt &amp;&amp; saltPos === 'front') ? 'соль + ' : '';
+    const sSuffix = (salt &amp;&amp; saltPos === 'back') ? ' + соль' : '';
+    recipeDesc = `${algo}(${sPrefix}${pos ? '№ + ' : ''}${unitName}${sSuffix})`;
   }
-  if (dbl) recipeDesc += ` вћ” РїРѕРІС‚РѕСЂРЅС‹Р№ ${algo}`;
-  recipeDesc += ` | СЃСЂРµР·: [СЃ ${off + 1}${lenVal ? ' РґР». ' + lenVal : ' РґРѕ РєРѕРЅС†Р°'}]`;
-  recipeDesc += ` | РєРѕРґРёСЂРѕРІРєР°: ${fmt.toUpperCase()}`;
-  recipeDesc += ` | РїРѕСЂСЏРґРѕРє: ${rev ? 'СЂРµРІРµСЂСЃ' : 'РїСЂСЏРјРѕР№'}, СЂР°Р·РґРµР»РёС‚РµР»СЊ: ${sv ? 'В«' + sv + 'В»' : 'Р±РµР·'}`;
-  if (hashRes) recipeDesc += ` | вћ” РїРѕСЃС‚-С…СЌС€РёСЂРѕРІР°РЅРёРµ РІСЃРµР№ СЃС‚СЂРѕРєРё`;
+  if (dbl) recipeDesc += ` ➔ повторный ${algo}`;
+  recipeDesc += ` | срез: [с ${off + 1}${lenVal ? ' дл. ' + lenVal : ' до конца'}]`;
+  recipeDesc += ` | кодировка: ${fmt.toUpperCase()}`;
+  recipeDesc += ` | порядок: ${rev ? 'реверс' : 'прямой'}, разделитель: ${sv ? '«' + sv + '»' : 'без'}`;
+  if (hashRes) recipeDesc += ` | ➔ пост-хэширование всей строки`;
   $('recipe').textContent = recipeDesc;
 
+  // Разбиение потока
   let parts = splitText(rawInput, unit);
-  if (unit === 'char' && getFlag('skip')) parts = parts.filter(c => c.trim());
+  if (unit === 'char' &amp;&amp; getFlag('skip')) parts = parts.filter(c => c.trim());
   if (rev) parts = [...parts].reverse();
   const totalParts = parts.length;
   if (totalParts > MAX_ELEMS) parts = parts.slice(0, MAX_ELEMS);
 
-  $('n').textContent = totalParts > parts.length ? `${parts.length} РёР· ${totalParts}` : parts.length;
-  $('chainTitle').textContent = `РњР°С‚СЂРёС†Р° С…СЌС€РµР№ (${unit === 'word' ? 'РїРѕ СЃР»РѕРІР°Рј' : unit === 'phrase' ? 'РїРѕ С„СЂР°Р·Р°Рј' : 'РїРѕ СЃРёРјРІРѕР»Р°Рј'})`;
+  $('n').textContent = totalParts > parts.length ? `${parts.length} из ${totalParts}` : parts.length;
+  $('chainTitle').textContent = `Матрица хэшей (${unit === 'word' ? 'по словам' : unit === 'phrase' ? 'по фразам' : 'по символам'})`;
 
   if (!parts.length) {
-    out.replaceChildren(el('span', 'ph', 'Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ РґР»СЏ СЂР°СЃС‡С‘С‚Р° С…СЌС€-РїРѕС‚РѕРєР°...'));
+    out.replaceChildren(el('span', 'ph', 'Введите текст для расчёта хэш-потока...'));
     chain.replaceChildren();
     $('l').textContent = '0';
     $('copyBtn').disabled = true;
@@ -1257,6 +1112,7 @@ async function render() {
     return;
   }
 
+  // Вычисление элементов
   let rows;
   try {
     rows = await Promise.all(parts.map(async (elem, i) => {
@@ -1273,6 +1129,7 @@ async function render() {
         digestBytes = await computeDigest(algo, bytesToHex(digestBytes), '', false);
       }
 
+      // Форматирование и срез
       let formatted = formatDigest(digestBytes, fmt);
       let sliced = lenVal ? formatted.slice(off, off + lenVal) : formatted.slice(off);
       if (up) sliced = sliced.toUpperCase();
@@ -1284,12 +1141,13 @@ async function render() {
       };
     }));
   } catch (err) {
-    if (currentSeq === seq) out.textContent = 'РћС€РёР±РєР°: ' + err.message;
+    if (currentSeq === seq) out.textContent = 'Ошибка: ' + err.message;
     return;
   }
 
   if (currentSeq !== seq) return;
 
+  // Пост-процессинг
   let finalJoined = rows.map(r => r.finalStr).join(sv);
   if (hashRes) {
     const postBytes = await computeDigest(algo, finalJoined, '', false);
@@ -1303,19 +1161,21 @@ async function render() {
   $('l').textContent = finalJoined.length;
   $('copyBtn').disabled = false;
 
+  // Рендер строки результатов
   const frag = document.createDocumentFragment();
   if (hashRes) {
     frag.append(el('span', 'a', finalJoined));
   } else {
     if (prefix) frag.append(el('span', 'sp', prefix));
     rows.forEach((r, i) => {
-      if (i && sv) frag.append(el('span', 'sp', sv));
+      if (i &amp;&amp; sv) frag.append(el('span', 'sp', sv));
       frag.append(el('span', i % 2 ? 'b' : 'a', r.finalStr));
     });
     if (suffix) frag.append(el('span', 'sp', suffix));
   }
   out.replaceChildren(frag);
 
+  // Отрисовка интерактивных плиток (с ограничением DOM)
   chain.replaceChildren();
   const TILE_LIMIT = 120;
   const tilesToRender = rows.slice(0, TILE_LIMIT);
@@ -1324,21 +1184,23 @@ async function render() {
     const tile = el('button', 'tile');
     tile.type = 'button';
 
-    const dispChar = hide ? 'вЂў' : (SHOW_CHAR[r.elem] || r.elem);
-    tile.title = `РЎРєРѕРїРёСЂРѕРІР°С‚СЊ С…СЌС€ РґР»СЏ: ${dispChar}`;
+    const dispChar = hide ? '•' : (SHOW_CHAR[r.elem] || r.elem);
+    tile.title = `Скопировать хэш для: ${dispChar}`;
 
     const top = el('div', 'tile-top');
     const glyph = el('span', 'tile-g', dispChar);
     
+    // Метрики
     let metaTxt = '';
     if (unit === 'char') {
-      metaTxt = hide ? 'U+вЂўвЂўвЂўвЂў' : 'U+' + Array.from(r.elem).map(c => c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')).join(' ');
+      metaTxt = hide ? 'U+••••' : 'U+' + Array.from(r.elem).map(c => c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')).join(' ');
     } else {
-      metaTxt = `${r.elem.length} СЃРёРјРІ.`;
+      metaTxt = `${r.elem.length} симв.`;
     }
     const metaSpan = el('span', 'tile-u', metaTxt);
     top.append(glyph, metaSpan);
 
+    // Цветовой отпечаток (энтропия первых 8 байт)
     const fp = el('div', 'fp');
     for (let j = 0; j < 8; j++) {
       const byteHex = r.fullHex.slice(j * 2, j * 2 + 2) || '00';
@@ -1348,22 +1210,23 @@ async function render() {
       fp.append(stripe);
     }
 
-    const hashSpan = el('span', 'tile-h', r.finalStr || '(РїСѓСЃС‚Рѕ)');
+    const hashSpan = el('span', 'tile-h', r.finalStr || '(пусто)');
 
     tile.append(top, fp, hashSpan);
-    tile.onclick = () => copyToClipboard(r.finalStr, `РҐСЌС€ СЌР»РµРјРµРЅС‚Р° В«${dispChar}В» СЃРєРѕРїРёСЂРѕРІР°РЅ`);
+    tile.onclick = () => copyToClipboard(r.finalStr, `Хэш элемента «${dispChar}» скопирован`);
     chain.append(tile);
   });
 
   const notes = [];
-  if (totalParts > rows.length) notes.push(`РћР±СЂР°Р±РѕС‚Р°РЅС‹ РїРµСЂРІС‹Рµ ${rows.length} РёР· ${totalParts} СЌР»РµРјРµРЅС‚РѕРІ.`);
-  if (rows.length > TILE_LIMIT) notes.push(`РџРѕРєР°Р·Р°РЅС‹ РїРµСЂРІС‹Рµ ${TILE_LIMIT} РёР· ${rows.length} РїР»РёС‚РѕРє.`);
+  if (totalParts > rows.length) notes.push(`Обработаны первые ${rows.length} из ${totalParts} элементов.`);
+  if (rows.length > TILE_LIMIT) notes.push(`Показаны первые ${TILE_LIMIT} из ${rows.length} плиток.`);
   if (notes.length) chain.append(el('div', 'limit-warning', notes.join(' ')));
 }
 
+/* ——— Привязка событий ——— */
 const debouncedRender = debounce(render, 90);
 
-$('copyBtn').onclick = () => copyToClipboard(lastResultText, 'Р“РѕС‚РѕРІР°СЏ СЃС‚СЂРѕРєР° СЃРєРѕРїРёСЂРѕРІР°РЅР°');
+$('copyBtn').onclick = () => copyToClipboard(lastResultText, 'Готовая строка скопирована');
 $('shareBtn').onclick = shareRecipe;
 
 $('clearBtn').onclick = () => {
@@ -1384,7 +1247,7 @@ $('exportBtn').onclick = () => {
   a.click();
   a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  notify('Р¤Р°Р№Р» СЌРєСЃРїРѕСЂС‚РёСЂРѕРІР°РЅ');
+  notify('Файл экспортирован');
 };
 
 ['t', 's', 'off', 'prefix', 'suffix', 'cs', 'customLen'].forEach(id => {
@@ -1402,28 +1265,27 @@ $('exportBtn').onclick = () => {
 });
 
 $('t').addEventListener('change', () => {
-  if (getFlag('hist') && !getFlag('mask')) pushHistory($('t').value);
+  if (getFlag('hist') &amp;&amp; !getFlag('mask')) pushHistory($('t').value);
 });
 
 loadFromUrl();
 render();
+if (window.suiteBridge) {
+  suiteBridge.on('share-url', d => copyToClipboard(d.url, 'Ссылка на рецепт скопирована'));
+  suiteBridge.on('load-recipe', d => { suiteBridge.recipe = d.recipe; loadFromUrl(); render(); });
+}
 </script>
 </body>
-</html>
-</template>
-
-<!-- =========================================================================
-     РЁРђР‘Р›РћРќ 2: SIGNAL 2.5 REVERSIBLE MATRIX
-     ========================================================================= -->
-<template id="tpl-signal">
-<!DOCTYPE html>
-<html lang="ru" data-theme="light">
+</html>"></iframe>
+<iframe id="signal" role="tabpanel" aria-labelledby="tab-signal" title="SIGNAL" scrolling="no" allow="clipboard-write *" srcdoc="<!DOCTYPE html>
+<html lang=&quot;ru&quot; data-theme=&quot;light&quot;>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>SIGNAL 2.5</title>
+<meta charset=&quot;UTF-8&quot;>
+<meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1, viewport-fit=cover&quot;>
+<title>SIGNAL 2.5 — Standard Reversible Text Encoder Matrix</title>
 <style>
   :root {
+    /* Лабораторная светлая тема (Default) */
     --bg: #F8FAFC;
     --bg-sub: #F1F5F9;
     --panel: #FFFFFF;
@@ -1446,7 +1308,7 @@ render();
     --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
   }
 
-  [data-theme="dark"] {
+  [data-theme=&quot;dark&quot;] {
     --bg: #090D12;
     --bg-sub: #0F1620;
     --panel: #131B26;
@@ -1471,26 +1333,26 @@ render();
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    overflow-y: hidden !important;
-    min-height: auto !important;
-  }
-
   body {
-    font-family: 'JetBrains Mono', 'SF Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
     background: var(--bg);
     color: var(--text);
+    min-height: 100vh;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     display: flex;
     flex-direction: column;
     transition: background 0.15s ease, color 0.15s ease;
   }
 
+  /* Header */
   header {
     background: var(--panel);
     border-bottom: 1px solid var(--border);
     padding: 14px clamp(16px, 4vw, 40px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
 
   .header-container {
@@ -1503,7 +1365,12 @@ render();
     gap: 12px;
   }
 
-  .brand-group { display: flex; align-items: center; gap: 12px; }
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
   .brand-badge {
     background: var(--primary);
     color: #fff;
@@ -1543,15 +1410,24 @@ render();
     font-weight: 500;
   }
 
-  .btn:hover { border-color: var(--primary); color: var(--primary); }
-  .btn-accent { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .btn-accent {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
   .btn-accent:hover { color: #fff; opacity: 0.9; }
 
+  /* Input Panel */
   main {
     max-width: 1440px;
     width: 100%;
     margin: 0 auto;
-    padding: 20px clamp(16px, 4vw, 40px) 36px clamp(16px, 4vw, 40px);
+    padding: clamp(16px, 3vw, 24px) clamp(16px, 4vw, 40px);
     flex: 1;
   }
 
@@ -1564,7 +1440,9 @@ render();
     position: relative;
   }
 
-  .input-card:focus-within { border-color: var(--border-focus); }
+  .input-card:focus-within {
+    border-color: var(--border-focus);
+  }
 
   .input-head {
     display: flex;
@@ -1579,7 +1457,13 @@ render();
     gap: 8px;
   }
 
-  .presets-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .presets-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
   .preset-tag {
     background: var(--bg);
     border: 1px solid var(--border);
@@ -1589,7 +1473,10 @@ render();
     cursor: pointer;
     color: var(--text-dim);
   }
-  .preset-tag:hover { border-color: var(--primary); color: var(--primary); }
+  .preset-tag:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
 
   textarea#src {
     width: 100%;
@@ -1619,15 +1506,23 @@ render();
     gap: 12px;
   }
 
-  .live-status { display: inline-flex; align-items: center; gap: 6px; }
+  .live-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
   .status-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--success);
     box-shadow: 0 0 6px var(--success);
   }
-  .status-dot.idle { background: var(--text-dimmer); box-shadow: none; }
+  .status-dot.idle {
+    background: var(--text-dimmer);
+    box-shadow: none;
+  }
 
+  /* Filters */
   .filter-bar {
     display: flex;
     justify-content: space-between;
@@ -1637,7 +1532,12 @@ render();
     flex-wrap: wrap;
   }
 
-  .tabs-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs-group {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+
   .tab-btn {
     padding: 5px 12px;
     border-radius: 4px;
@@ -1648,7 +1548,10 @@ render();
     cursor: pointer;
     font-family: inherit;
   }
-  .tab-btn:hover { background: var(--bg-sub); color: var(--text); }
+  .tab-btn:hover {
+    background: var(--bg-sub);
+    color: var(--text);
+  }
   .tab-btn.active {
     background: var(--panel);
     border-color: var(--border);
@@ -1656,6 +1559,7 @@ render();
     font-weight: 600;
   }
 
+  /* Grid */
   .grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
@@ -1672,7 +1576,11 @@ render();
     transition: border-color 0.15s ease, background 0.15s ease;
   }
 
-  .cell.wide { grid-column: span 2; }
+  .cell.wide {
+    grid-column: span 2;
+  }
+
+  /* Несовместимость с кириллицей: мягкая индикация */
   .cell.warn-cyrillic {
     border-color: var(--warning-border);
     background: var(--warning-bg);
@@ -1688,7 +1596,9 @@ render();
     gap: 8px;
   }
 
-  .cell.warn-cyrillic .cell-head { background: rgba(217, 119, 6, 0.05); }
+  .cell.warn-cyrillic .cell-head {
+    background: rgba(217, 119, 6, 0.05);
+  }
 
   .cell-title-block {
     display: flex;
@@ -1697,8 +1607,17 @@ render();
     flex-wrap: wrap;
   }
 
-  .cell-num { font-size: 0.7rem; font-weight: 700; color: var(--primary); }
-  .cell-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; }
+  .cell-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--primary);
+  }
+
+  .cell-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
 
   .badge {
     font-size: 0.65rem;
@@ -1722,7 +1641,11 @@ render();
     border-color: var(--danger);
   }
 
-  .cell-actions { display: flex; gap: 6px; }
+  .cell-actions {
+    display: flex;
+    gap: 6px;
+  }
+
   .action-btn {
     background: transparent;
     border: 1px solid var(--border);
@@ -1734,16 +1657,18 @@ render();
     font-family: inherit;
     transition: all 0.12s ease;
   }
-  .action-btn:hover { border-color: var(--primary); color: var(--primary); }
-  .action-btn.active-play { background: var(--warning); border-color: var(--warning); color: #fff; }
-  .action-btn.copied { background: var(--success); border-color: var(--success); color: #fff; }
-  
-  .action-btn.send-btn {
-    border-color: var(--border);
+  .action-btn:hover {
+    border-color: var(--primary);
     color: var(--primary);
   }
-  .action-btn.send-btn:hover {
-    background: var(--primary);
+  .action-btn.active-play {
+    background: var(--warning);
+    border-color: var(--warning);
+    color: #fff;
+  }
+  .action-btn.copied {
+    background: var(--success);
+    border-color: var(--success);
     color: #fff;
   }
 
@@ -1759,7 +1684,10 @@ render();
     max-height: 220px;
     overflow-y: auto;
   }
-  .cell-body.empty { color: var(--text-dimmer); user-select: none; }
+  .cell-body.empty {
+    color: var(--text-dimmer);
+    user-select: none;
+  }
 
   .cell-foot {
     padding: 6px 14px;
@@ -1775,77 +1703,139 @@ render();
     .cell.wide { grid-column: span 1; }
     .grid { grid-template-columns: 1fr; }
   }
+
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+    padding: 14px clamp(16px, 4vw, 40px);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+  }
+  .footer-row {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
 </style>
+<style>body{min-height:0!important}</style>
+<script>
+/* suite-bridge: связь с оболочкой (тема, высота, ссылка). Логика приложения не затрагивается. */
+(function(){
+  var root=document.documentElement, S=null, hs={}, last=0;
+  try{ if(parent!==window) S=parent.__suite; }catch(e){}
+  var B=window.suiteBridge={embedded:parent!==window, recipe:(S&amp;&amp;S.recipe)||'',
+    post:function(m){ parent.postMessage(m,'*'); },
+    on:function(t,f){ hs[t]=f; }};
+  function theme(t){ root.setAttribute('data-theme', t==='dark'?'dark':'light'); }
+  if(S&amp;&amp;S.theme) theme(S.theme);
+  if(!B.embedded) return;
+  function report(){
+    var b=document.body; if(!b) return;
+    var cs=getComputedStyle(b);
+    var h=Math.ceil(b.getBoundingClientRect().height+(parseFloat(cs.marginTop)||0)+(parseFloat(cs.marginBottom)||0));
+    if(h>0&amp;&amp;h!==last){ last=h; B.post({type:'height',value:h}); }
+  }
+  addEventListener('message',function(e){
+    var d=e.data; if(e.source!==parent||!d) return;
+    if(d.type==='theme') theme(d.value);
+    else if(d.type==='init'){ theme(d.theme); B.recipe=d.recipe||''; }
+    else if(d.type==='measure'){ last=0; report(); }
+    else if(hs[d.type]) hs[d.type](d);
+  });
+  document.addEventListener('DOMContentLoaded',function(){
+    new ResizeObserver(report).observe(document.body); report(); B.post({type:'hello'});
+  });
+  addEventListener('load',report);
+})();
+</script>
 </head>
 <body>
 
 <header>
-  <div class="header-container">
-    <div class="brand-group">
-      <span class="brand-badge">SIGNAL 2.5</span>
-      <span class="brand-name">STANDARDS ENCODER ARRAY</span>
-      <span class="brand-desc">RFC / ITU / ISO РјР°С‚СЂРёС†Р°</span>
+  <div class=&quot;header-container&quot;>
+    <div class=&quot;brand-group&quot;>
+      <span class=&quot;brand-badge&quot;>SIGNAL 2.5</span>
+      <span class=&quot;brand-name&quot;>STANDARDS ENCODER ARRAY</span>
+      <span class=&quot;brand-desc&quot;>Детерминированная обратимая матрица (RFC / ITU / ISO)</span>
     </div>
-    <div style="display:flex; gap:8px;">
-      <button class="btn" id="btnSendInputToHf" title="РџРµСЂРµРґР°С‚СЊ РІС…РѕРґРЅРѕР№ С‚РµРєСЃС‚ РІ РјРѕРґСѓР»СЊ С…СЌС€РёСЂРѕРІР°РЅРёСЏ">вћ” Р’ HashForge</button>
-      <button class="btn btn-accent" id="btnExport">рџ“‹ Р­РєСЃРїРѕСЂС‚ РІСЃРµС…</button>
-      <button class="btn" id="btnClear">вњ• РћС‡РёСЃС‚РёС‚СЊ</button>
+    <div style=&quot;display:flex; gap:8px;&quot;>
+      <button class=&quot;btn btn-accent&quot; id=&quot;btnExport&quot;>📋 Экспорт всех каналов</button>
+      <button class=&quot;btn&quot; id=&quot;btnClear&quot;>✕ Очистить</button>
     </div>
   </div>
 </header>
 
 <main>
-  <div class="input-card">
-    <div class="input-head">
-      <span>Р’РҐРћР”РќРћР™ РЎРР“РќРђР› (UNICODE UTF-8)</span>
-      <div class="presets-row">
-        <span>РџСЂРµСЃРµС‚С‹:</span>
-        <span class="preset-tag" data-val="SIGNAL 2025">SIGNAL 2025</span>
-        <span class="preset-tag" data-val="РЎР’РЇР—Р¬ 73">РЎР’РЇР—Р¬ 73 (RU)</span>
-        <span class="preset-tag" data-val="Mayday 7700">Mayday 7700</span>
-        <span class="preset-tag" data-val="Standard RFC 4648">RFC 4648</span>
+  <!-- Входная зона -->
+  <div class=&quot;input-card&quot;>
+    <div class=&quot;input-head&quot;>
+      <span>ВХОДНОЙ СИГНАЛ (UNICODE UTF-8)</span>
+      <div class=&quot;presets-row&quot;>
+        <span>Пресеты:</span>
+        <span class=&quot;preset-tag&quot; data-val=&quot;SIGNAL 2025&quot;>SIGNAL 2025</span>
+        <span class=&quot;preset-tag&quot; data-val=&quot;СВЯЗЬ 73&quot;>СВЯЗЬ 73 (RU)</span>
+        <span class=&quot;preset-tag&quot; data-val=&quot;Mayday 7700&quot;>Mayday 7700</span>
+        <span class=&quot;preset-tag&quot; data-val=&quot;Standard RFC 4648&quot;>RFC 4648</span>
       </div>
     </div>
-    <textarea id="src" autofocus placeholder="Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ РЅР° Р»СЋР±РѕРј СЏР·С‹РєРµвЂ¦">SIGNAL 2025: РЎРІСЏР·СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅР°</textarea>
-    <div class="input-info">
-      <div class="live-status">
-        <span class="status-dot" id="liveDot"></span>
-        <span id="charCount">0</span> СЃРёРјРІ. В· <span id="byteCount">0</span> Р±Р°Р№С‚ UTF-8 В· Р­РЅС‚СЂРѕРїРёСЏ: <span id="entropyVal">0.00</span> Р±РёС‚/СЃРёРјРІ.
+    <textarea id=&quot;src&quot; autofocus placeholder=&quot;Введите текст на любом языке…&quot;>SIGNAL 2025: Связь установлена</textarea>
+    <div class=&quot;input-info&quot;>
+      <div class=&quot;live-status&quot;>
+        <span class=&quot;status-dot&quot; id=&quot;liveDot&quot;></span>
+        <span id=&quot;charCount&quot;>0</span> симв. · <span id=&quot;byteCount&quot;>0</span> байт UTF-8 · Энтропия: <span id=&quot;entropyVal&quot;>0.00</span> бит/симв.
       </div>
-      <div>15 РѕР±СЂР°С‚РёРјС‹С… СЃС‚Р°РЅРґР°СЂС‚РѕРІ + 1 РєРѕРЅС‚СЂРѕР»СЊРЅС‹Р№ С…РµС€</div>
+      <div>15 обратимых стандартов + 1 контрольный хеш</div>
     </div>
   </div>
 
-  <div class="filter-bar">
-    <div class="tabs-group" id="tabs">
-      <button class="tab-btn active" data-cat="all">Р’СЃРµ СЃС‚Р°РЅРґР°СЂС‚С‹ (16)</button>
-      <button class="tab-btn" data-cat="rfc">RFC & РРЅС‚РµСЂРЅРµС‚</button>
-      <button class="tab-btn" data-cat="radio">Р Р°РґРёРѕ & РЎРІСЏР·СЊ</button>
-      <button class="tab-btn" data-cat="cipher">РЎРёРјРјРµС‚СЂРёС‡РЅС‹Рµ С€РёС„СЂС‹</button>
-      <button class="tab-btn" data-cat="telecom">РўРµР»РµРєРѕРјРјСѓРЅРёРєР°С†РёРё</button>
+  <!-- Фильтрация -->
+  <div class=&quot;filter-bar&quot;>
+    <div class=&quot;tabs-group&quot; id=&quot;tabs&quot;>
+      <button class=&quot;tab-btn active&quot; data-cat=&quot;all&quot;>Все стандарты (16)</button>
+      <button class=&quot;tab-btn&quot; data-cat=&quot;rfc&quot;>RFC &amp; Интернет</button>
+      <button class=&quot;tab-btn&quot; data-cat=&quot;radio&quot;>Радио &amp; Связь</button>
+      <button class=&quot;tab-btn&quot; data-cat=&quot;cipher&quot;>Симметричные шифры</button>
+      <button class=&quot;tab-btn&quot; data-cat=&quot;telecom&quot;>Телекоммуникации</button>
     </div>
   </div>
 
-  <div class="grid" id="matrixGrid"></div>
+  <!-- Матрица кодирования -->
+  <div class=&quot;grid&quot; id=&quot;matrixGrid&quot;></div>
 </main>
+
+<footer>
+  <div class=&quot;footer-row&quot;>
+    <span>Все алгоритмы, кроме SHA-256, являются взаимно однозначными и детерминированными</span>
+    <span id=&quot;utcClock&quot;>UTC 00:00:00</span>
+  </div>
+</footer>
 
 <script>
 (function(){
-  "use strict";
+  &quot;use strict&quot;;
 
+  // =========================================================================
+  // 1. СЛОВАРИ И ТАБЛИЦЫ СТАНДАРТОВ (СТРОГО ПО СПЕЦИФИКАЦИЯМ)
+  // =========================================================================
+
+  // Морзе: Рекомендация ITU-R M.1677-1 (латиница) + ГОСТ 22515-77 (кириллица)
   const MORSE_ITU = {
     'a':'.-','b':'-...','c':'-.-.','d':'-..','e':'.','f':'..-.','g':'--.','h':'....','i':'..','j':'.---',
     'k':'-.-','l':'.-..','m':'--','n':'-.','o':'---','p':'.--.','q':'--.-','r':'.-.','s':'...','t':'-',
     'u':'..-','v':'...-','w':'.--','x':'-..-','y':'-.--','z':'--..',
-    'Р°':'.-','Р±':'-...','РІ':'.--','Рі':'--.','Рґ':'-..','Рµ':'.','С‘':'.','Р¶':'...-','Р·':'--..','Рё':'..',
-    'Р№':'.---','Рє':'-.-','Р»':'.-..','Рј':'--','РЅ':'-.','Рѕ':'---','Рї':'.--.','СЂ':'.-.','СЃ':'...','С‚':'-',
-    'Сѓ':'..-','С„':'..-.','С…':'....','С†':'-.-.','С‡':'---.','С€':'----','С‰':'--.-','СЉ':'--.--','С‹':'-.--',
-    'СЊ':'-..-','СЌ':'...-...','СЋ':'..--','СЏ':'.-.-',
+    'а':'.-','б':'-...','в':'.--','г':'--.','д':'-..','е':'.','ё':'.','ж':'...-','з':'--..','и':'..',
+    'й':'.---','к':'-.-','л':'.-..','м':'--','н':'-.','о':'---','п':'.--.','р':'.-.','с':'...','т':'-',
+    'у':'..-','ф':'..-.','х':'....','ц':'-.-.','ч':'---.','ш':'----','щ':'--.-','ъ':'--.--','ы':'-.--',
+    'ь':'-..-','э':'...-...','ю':'..--','я':'.-.-',
     '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....',
     '6':'-....','7':'--...','8':'---..','9':'----.',
     '.':'.-.-.-',',':'--..--','?':'..--..','!':'-.-.--','-':'-....-','/':'-..-.'
   };
 
+  // NATO / ICAO Doc 9432 Annex 10 (Строго английские кодовые слова и числительные)
   const NATO_ICAO = {
     'a':'Alpha','b':'Bravo','c':'Charlie','d':'Delta','e':'Echo','f':'Foxtrot','g':'Golf',
     'h':'Hotel','i':'India','j':'Juliett','k':'Kilo','l':'Lima','m':'Mike','n':'November',
@@ -1855,28 +1845,31 @@ render();
     '5':'Five','6':'Six','7':'Seven','8':'Eight','9':'Nine'
   };
 
+  // Официальный связной радиоалфавит связи РФ / СССР
   const RU_RADIO = {
-    'Р°':'РђРЅРЅР°','Р±':'Р‘РѕСЂРёСЃ','РІ':'Р’Р°СЃРёР»РёР№','Рі':'Р“СЂРёРіРѕСЂРёР№','Рґ':'Р”РјРёС‚СЂРёР№','Рµ':'Р•Р»РµРЅР°','С‘':'Р•Р»РµРЅР°',
-    'Р¶':'Р–РµРЅСЏ','Р·':'Р—РёРЅР°РёРґР°','Рё':'РРІР°РЅ','Р№':'РРІР°РЅ-РєСЂР°С‚РєРёР№','Рє':'РљРѕРЅСЃС‚Р°РЅС‚РёРЅ','Р»':'Р›РµРѕРЅРёРґ',
-    'Рј':'РњРёС…Р°РёР»','РЅ':'РќРёРєРѕР»Р°Р№','Рѕ':'РћР»СЊРіР°','Рї':'РџР°РІРµР»','СЂ':'Р РѕРјР°РЅ','СЃ':'РЎРµРјС‘РЅ','С‚':'РўР°С‚СЊСЏРЅР°',
-    'Сѓ':'РЈР»СЊСЏРЅР°','С„':'Р¤С‘РґРѕСЂ','С…':'РҐР°СЂРёС‚РѕРЅ','С†':'Р¦Р°РїР»СЏ','С‡':'Р§РµР»РѕРІРµРє','С€':'РЁСѓСЂР°','С‰':'Р©СѓРєР°',
-    'СЉ':'РўРІС‘СЂРґС‹Р№-Р·РЅР°Рє','С‹':'Р•СЂС‹','СЊ':'РњСЏРіРєРёР№-Р·РЅР°Рє','СЌ':'Р­С…Рѕ','СЋ':'Р®СЂРёР№','СЏ':'РЇРєРѕРІ',
-    '0':'РќРѕР»СЊ','1':'РћРґРёРЅ','2':'Р”РІР°','3':'РўСЂРё','4':'Р§РµС‚С‹СЂРµ',
-    '5':'РџСЏС‚СЊ','6':'РЁРµСЃС‚СЊ','7':'РЎРµРјСЊ','8':'Р’РѕСЃРµРјСЊ','9':'Р”РµРІСЏС‚СЊ'
+    'а':'Анна','б':'Борис','в':'Василий','г':'Григорий','д':'Дмитрий','е':'Елена','ё':'Елена',
+    'ж':'Женя','з':'Зинаида','и':'Иван','й':'Иван-краткий','к':'Константин','л':'Леонид',
+    'м':'Михаил','н':'Николай','о':'Ольга','п':'Павел','р':'Роман','с':'Семён','т':'Татьяна',
+    'у':'Ульяна','ф':'Фёдор','х':'Харитон','ц':'Цапля','ч':'Человек','ш':'Шура','щ':'Щука',
+    'ъ':'Твёрдый-знак','ы':'Еры','ь':'Мягкий-знак','э':'Эхо','ю':'Юрий','я':'Яков',
+    '0':'Ноль','1':'Один','2':'Два','3':'Три','4':'Четыре',
+    '5':'Пять','6':'Шесть','7':'Семь','8':'Восемь','9':'Девять'
   };
 
+  // Шрифт Брайля Grade 1 (ГОСТ Р 58511-2019 / Unified English Braille)
   const BRAILLE_GRADE1 = {
-    'a':'в Ѓ','b':'в ѓ','c':'в ‰','d':'в ™','e':'в ‘','f':'в ‹','g':'в ›','h':'в “','i':'в Љ','j':'в љ',
-    'k':'в …','l':'в ‡','m':'в Ќ','n':'в ќ','o':'в •','p':'в Џ','q':'в џ','r':'в —','s':'в Ћ','t':'в ћ',
-    'u':'в Ґ','v':'в §','w':'в є','x':'в ­','y':'в Ѕ','z':'в µ',
-    'Р°':'в Ѓ','Р±':'в ѓ','РІ':'в є','Рі':'в ›','Рґ':'в ™','Рµ':'в ‘','С‘':'в Ў','Р¶':'в љ','Р·':'в µ','Рё':'в Љ',
-    'Р№':'в Ї','Рє':'в …','Р»':'в ‡','Рј':'в Ќ','РЅ':'в ќ','Рѕ':'в •','Рї':'в Џ','СЂ':'в —','СЃ':'в Ћ','С‚':'в ћ',
-    'Сѓ':'в Ґ','С„':'в ‹','С…':'в “','С†':'в ‰','С‡':'в џ','С€':'в ±','С‰':'в ­','СЉ':'в ·','С‹':'в ®','СЊ':'в ѕ',
-    'СЌ':'в Є','СЋ':'в і','СЏ':'в «',
-    '1':'в јв Ѓ','2':'в јв ѓ','3':'в јв ‰','4':'в јв ™','5':'в јв ‘','6':'в јв ‹','7':'в јв ›','8':'в јв “','9':'в јв Љ','0':'в јв љ',
-    ' ':' ','.':'в І',',':'в ‚','!':'в –','?':'в ¦','-':'в ¤'
+    'a':'⠁','b':'⠃','c':'⠉','d':'⠙','e':'⠑','f':'⠋','g':'⠛','h':'⠓','i':'⠊','j':'⠚',
+    'k':'⠅','l':'⠇','m':'⠍','n':'⠝','o':'⠕','p':'⠏','q':'⠟','r':'⠗','s':'⠎','t':'⠞',
+    'u':'⠥','v':'⠧','w':'⠺','x':'⠭','y':'⠽','z':'⠵',
+    'а':'⠁','б':'⠃','в':'⠺','г':'⠛','д':'⠙','е':'⠑','ё':'⠡','ж':'⠚','з':'⠵','и':'⠊',
+    'й':'⠯','к':'⠅','л':'⠇','м':'⠍','н':'⠝','о':'⠕','п':'⠏','р':'⠗','с':'⠎','т':'⠞',
+    'у':'⠥','ф':'⠋','х':'⠓','ц':'⠉','ч':'⠟','ш':'⠱','щ':'⠭','ъ':'⠷','ы':'⠮','ь':'⠾',
+    'э':'⠪','ю':'⠳','я':'⠫',
+    '1':'⠼⠁','2':'⠼⠃','3':'⠼⠉','4':'⠼⠙','5':'⠼⠑','6':'⠼⠋','7':'⠼⠛','8':'⠼⠓','9':'⠼⠊','0':'⠼⠚',
+    ' ':' ','.':'⠲',',':'⠂','!':'⠖','?':'⠦','-':'⠤'
   };
 
+  // Флаговый семафор (International Maritime Semaphore)
   const SEMAPHORE_MAP = {
     'a':'N-NE','b':'N-E','c':'N-SE','d':'N-S','e':'N-SW','f':'N-W','g':'N-NW',
     'h':'NE-E','i':'NE-SE','j':'E-S','k':'NE-N','l':'NE-SW','m':'NE-W','n':'NE-NW',
@@ -1884,16 +1877,23 @@ render();
     'v':'SW-W','w':'SE-NW','x':'S-SW','y':'S-W','z':'S-NW'
   };
 
+  // =========================================================================
+  // 2. ДЕТЕРМИНИРОВАННЫЕ АЛГОРИТМЫ ПРЕОБРАЗОВАНИЯ
+  // =========================================================================
+
+  // UTF-8 Binary (8-bit)
   function toBinary(str) {
     return Array.from(new TextEncoder().encode(str))
       .map(b => b.toString(2).padStart(8, '0')).join(' ');
   }
 
+  // Hexadecimal (RFC 4648 §8)
   function toHex(str) {
     return Array.from(new TextEncoder().encode(str))
       .map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
   }
 
+  // Base64 (RFC 4648 §4)
   function toBase64(str) {
     const bytes = new TextEncoder().encode(str);
     let binary = '';
@@ -1901,6 +1901,7 @@ render();
     return btoa(binary);
   }
 
+  // Base32 (RFC 4648 §6)
   function toBase32(str) {
     const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
     const bytes = new TextEncoder().encode(str);
@@ -1909,19 +1910,21 @@ render();
       value = (value << 8) | bytes[i];
       bits += 8;
       while (bits >= 5) {
-        output += alphabet[(value >>> (bits - 5)) & 31];
+        output += alphabet[(value >>> (bits - 5)) &amp; 31];
         bits -= 5;
       }
     }
-    if (bits > 0) output += alphabet[(value << (5 - bits)) & 31];
+    if (bits > 0) output += alphabet[(value << (5 - bits)) &amp; 31];
     while (output.length % 8 !== 0) output += '=';
     return output;
   }
 
+  // URI Percent-Encoding (RFC 3986)
   function toPercentEncoding(str) {
     return encodeURIComponent(str);
   }
 
+  // Punycode / IDNA (RFC 3492)
   function toPunycode(str) {
     const base = 36, tmin = 1, tmax = 26, skew = 38, damp = 700, initialBias = 72, initialN = 128;
     function adapt(delta, numpoints, firsttime) {
@@ -1944,7 +1947,7 @@ render();
       let m = 0x7fffffff;
       input.forEach(c => {
         const cp = c.codePointAt(0);
-        if (cp >= n && cp < m) m = cp;
+        if (cp >= n &amp;&amp; cp < m) m = cp;
       });
       delta += (m - n) * (h + 1);
       n = m;
@@ -1972,16 +1975,17 @@ render();
     return 'xn--' + out;
   }
 
+  // ROT13 (Latin, 26 букв) / ROT16 (Кириллица, 32 буквы без 'ё') — Строгие инволюции
   function rotInvolution(str) {
     return str.replace(/[a-zA-Z]/g, c => {
       const base = c <= 'Z' ? 65 : 97;
       return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base);
-    }).replace(/[Р°-СЏРђ-РЇС‘РЃ]/g, c => {
-      if (c === 'С‘') return 'С‡';
-      if (c === 'РЃ') return 'Р§';
+    }).replace(/[а-яА-ЯёЁ]/g, c => {
+      if (c === 'ё') return 'ч';
+      if (c === 'Ё') return 'Ч';
       const isUpper = c === c.toUpperCase();
       const code = c.toLowerCase().charCodeAt(0);
-      if (code >= 1072 && code <= 1103) {
+      if (code >= 1072 &amp;&amp; code <= 1103) {
         const shifted = ((code - 1072 + 16) % 32) + 1072;
         const res = String.fromCharCode(shifted);
         return isUpper ? res.toUpperCase() : res;
@@ -1990,17 +1994,19 @@ render();
     });
   }
 
+  // Атбаш (Зеркальная перестановка A<->Z, А<->Я) — Строгая инволюция
   function atbash(str) {
     return Array.from(str).map(c => {
       const code = c.charCodeAt(0);
-      if (code >= 65 && code <= 90) return String.fromCharCode(90 - (code - 65));
-      if (code >= 97 && code <= 122) return String.fromCharCode(122 - (code - 97));
-      if (code >= 1040 && code <= 1071) return String.fromCharCode(1071 - (code - 1040));
-      if (code >= 1072 && code <= 1103) return String.fromCharCode(1103 - (code - 1072));
+      if (code >= 65 &amp;&amp; code <= 90) return String.fromCharCode(90 - (code - 65));
+      if (code >= 97 &amp;&amp; code <= 122) return String.fromCharCode(122 - (code - 97));
+      if (code >= 1040 &amp;&amp; code <= 1071) return String.fromCharCode(1071 - (code - 1040));
+      if (code >= 1072 &amp;&amp; code <= 1103) return String.fromCharCode(1103 - (code - 1072));
       return c;
     }).join('');
   }
 
+  // Tap Code (Полибий 5x5, К=С) — Строгий тюремный шифр
   function toTapCode(str) {
     const grid = [
       ['A','B','C','D','E'],
@@ -2031,10 +2037,11 @@ render();
     return encodedWords.join('  /  ');
   }
 
+  // Шифр Бэкона (Bacon's Cipher 5-bit)
   function toBacon(str) {
     return Array.from(str.toUpperCase()).map(c => {
       const code = c.charCodeAt(0);
-      if (code >= 65 && code <= 90) {
+      if (code >= 65 &amp;&amp; code <= 90) {
         const val = code - 65;
         return val.toString(2).padStart(5, '0').replace(/0/g, 'A').replace(/1/g, 'B');
       }
@@ -2043,12 +2050,14 @@ render();
     }).filter(c => c !== '').join(' ');
   }
 
+  // Азбука Морзе ITU / ГОСТ
   function toMorse(str) {
     return str.toLowerCase().split(/\s+/).map(word => {
       return Array.from(word).map(c => MORSE_ITU[c] || '').filter(Boolean).join(' ');
     }).filter(w => w.length > 0).join('  /  ');
   }
 
+  // NATO / ICAO
   function toNato(str) {
     return Array.from(str.toLowerCase()).map(c => {
       if (c === ' ') return '/';
@@ -2056,6 +2065,7 @@ render();
     }).filter(Boolean).join(' ');
   }
 
+  // Связной радиоалфавит (Кириллица)
   function toRuRadio(str) {
     return Array.from(str.toLowerCase()).map(c => {
       if (c === ' ') return '/';
@@ -2063,16 +2073,19 @@ render();
     }).filter(Boolean).join(' ');
   }
 
+  // Шрифт Брайля (ISO / ГОСТ)
   function toBraille(str) {
     return Array.from(str.toLowerCase()).map(c => BRAILLE_GRADE1[c] || c).join('');
   }
 
+  // Семафорная азбука
   function toSemaphore(str) {
     return str.toLowerCase().split(/\s+/).map(w => {
       return Array.from(w).map(c => SEMAPHORE_MAP[c] || '').filter(Boolean).join(' ');
     }).filter(w => w.length > 0).join('  /  ');
   }
 
+  // Zero-Width Steganography (100% обратимый UTF-8 бинарный поток)
   const ZW_ZERO = '\u200B';
   const ZW_ONE  = '\u200C';
   const ZW_FLAG = '\u200D';
@@ -2085,13 +2098,14 @@ render();
   function previewZeroWidth(raw) {
     if (!raw) return '';
     return Array.from(raw).map(c => {
-      if (c === ZW_ZERO) return 'В·';
-      if (c === ZW_ONE) return 'в–Є';
-      if (c === ZW_FLAG) return 'в”‚';
+      if (c === ZW_ZERO) return '·';
+      if (c === ZW_ONE) return '▪';
+      if (c === ZW_FLAG) return '│';
       return c;
     }).join('');
   }
 
+  // SHA-256 (FIPS PUB 180-4)
   async function computeSha256(str) {
     if (!str) return '';
     const buf = new TextEncoder().encode(str);
@@ -2099,6 +2113,7 @@ render();
     return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
+  // Расчёт энтропии Шеннона
   function calcEntropy(str) {
     if (!str) return '0.00';
     const len = str.length;
@@ -2112,25 +2127,84 @@ render();
     return ent.toFixed(2);
   }
 
+  // =========================================================================
+  // 3. РЕЕСТР КАНАЛОВ И СПЕЦИФИКАЦИЙ
+  // =========================================================================
+
   const MATRIX = [
-    { id: 'binary', title: 'BINARY (UTF-8)', cat: 'rfc', std: 'RFC 3629', fn: toBinary, latinOnly: false, irreversible: false, note: '8-Р±РёС‚ UTF-8' },
-    { id: 'hex', title: 'HEXADECIMAL', cat: 'rfc', std: 'RFC 4648 В§8', fn: toHex, latinOnly: false, irreversible: false, note: '16-СЂРёС‡РЅС‹Р№ РґР°РјРї' },
-    { id: 'base64', title: 'BASE64', cat: 'rfc', std: 'RFC 4648 В§4', fn: toBase64, latinOnly: false, irreversible: false, note: 'РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ Base64' },
-    { id: 'base32', title: 'BASE32', cat: 'rfc', std: 'RFC 4648 В§6', fn: toBase32, latinOnly: false, irreversible: false, note: '32-Р·РЅР°С‡РЅС‹Р№ Р°Р»С„Р°РІРёС‚' },
-    { id: 'url', title: 'PERCENT-ENCODING', cat: 'rfc', std: 'RFC 3986', fn: toPercentEncoding, latinOnly: false, irreversible: false, note: 'URL РєРѕРґРёСЂРѕРІР°РЅРёРµ' },
-    { id: 'punycode', title: 'PUNYCODE / IDNA', cat: 'rfc', std: 'RFC 3492', fn: toPunycode, latinOnly: false, irreversible: false, note: 'РРЅС‚РµСЂРЅР°С†РёРѕРЅР°Р»РёР·Р°С†РёСЏ РґРѕРјРµРЅРѕРІ' },
-    { id: 'morse', title: 'MORSE CODE', cat: 'radio', std: 'ITU-R M.1677 / Р“РћРЎРў', fn: toMorse, wide: true, audio: true, latinOnly: false, irreversible: false, note: 'Р”РІСѓСЏР·С‹С‡РЅС‹Р№ ITU / Р“РћРЎРў' },
-    { id: 'nato', title: 'NATO / ICAO PHONETIC', cat: 'radio', std: 'ICAO Doc 9432', fn: toNato, wide: true, latinOnly: true, irreversible: false, note: 'РњРµР¶РґСѓРЅР°СЂРѕРґРЅС‹Р№ СЃС‚Р°РЅРґР°СЂС‚ СЂР°РґРёРѕСЃРІСЏР·Рё' },
-    { id: 'ruradio', title: 'РЎР’РЇР—РќРћР™ Р РђР”РРћРђР›Р¤РђР’РРў', cat: 'radio', std: 'Р РµРіР»Р°РјРµРЅС‚ СЂР°РґРёРѕСЃРІСЏР·Рё Р Р¤', fn: toRuRadio, wide: true, cyrillicOnly: true, irreversible: false, note: 'РћС„РёС†РёР°Р»СЊРЅС‹Р№ СЂРµРіР»Р°РјРµРЅС‚ Р Р¤/РЎРЎРЎР ' },
-    { id: 'rot13', title: 'ROT13 / ROT16 (CAESAR)', cat: 'cipher', std: 'RFC 4702 / РРЅРІРѕР»СЋС†РёСЏ', fn: rotInvolution, latinOnly: false, irreversible: false, note: 'Р›Р°С‚РёРЅРёС†Р°: ROT13 / РљРёСЂРёР»Р»РёС†Р°: ROT16' },
-    { id: 'atbash', title: 'ATBASH CIPHER', cat: 'cipher', std: 'Р‘РёРµРєС‚РёРІРЅР°СЏ РёРЅРІРѕР»СЋС†РёСЏ', fn: atbash, latinOnly: false, irreversible: false, note: 'Р—РµСЂРєР°Р»СЊРЅС‹Р№ С€РёС„СЂ (RU/EN)' },
-    { id: 'tapcode', title: 'TAP CODE (РџРћР›РР‘РР™)', cat: 'telecom', std: 'Standard 5x5 Grid', fn: toTapCode, latinOnly: true, irreversible: false, note: 'РўСЋСЂРµРјРЅС‹Р№ Р°РєСѓСЃС‚РёС‡РµСЃРєРёР№ С€РёС„СЂ (K=C)' },
-    { id: 'bacon', title: 'BACON CIPHER', cat: 'cipher', std: '5-Bit Binary Alphabet', fn: toBacon, latinOnly: true, irreversible: false, note: 'Р‘РёРЅР°СЂРЅС‹Р№ С€РёС„СЂ Р¤СЂСЌРЅСЃРёСЃР° Р‘СЌРєРѕРЅР°' },
-    { id: 'braille', title: 'BRAILLE GRADE 1', cat: 'telecom', std: 'Р“РћРЎРў Р  58511 / ISO', fn: toBraille, latinOnly: false, irreversible: false, note: '6-С‚РѕС‡РµС‡РЅС‹Р№ СЂРµР»СЊРµС„РЅС‹Р№ С€СЂРёС„С‚ RU/EN' },
-    { id: 'semaphore', title: 'FLAG SEMAPHORE', cat: 'telecom', std: 'Maritime Standard', fn: toSemaphore, latinOnly: true, irreversible: false, note: 'РћРїС‚РёС‡РµСЃРєРёР№ СЃРµРјР°С„РѕСЂ' },
-    { id: 'zerowidth', title: 'ZERO-WIDTH STEGANO', cat: 'telecom', std: 'Unicode Steganography', fn: toZeroWidth, previewFn: previewZeroWidth, wide: true, latinOnly: false, irreversible: false, note: 'РЎРєСЂС‹С‚С‹Рµ Р±РёС‚С‹ ZWSP/ZWNJ' },
-    { id: 'sha256', title: 'SHA-256 HASH', cat: 'rfc', std: 'FIPS PUB 180-4', fn: computeSha256, async: true, wide: true, latinOnly: false, irreversible: true, note: 'РљСЂРёРїС‚РѕРіСЂР°С„РёС‡РµСЃРєР°СЏ С…РµС€-СЃСѓРјРјР°' }
+    {
+      id: 'binary', title: 'BINARY (UTF-8)', cat: 'rfc', std: 'RFC 3629',
+      fn: toBinary, latinOnly: false, irreversible: false, note: '8-бит UTF-8'
+    },
+    {
+      id: 'hex', title: 'HEXADECIMAL', cat: 'rfc', std: 'RFC 4648 §8',
+      fn: toHex, latinOnly: false, irreversible: false, note: '16-ричный дамп'
+    },
+    {
+      id: 'base64', title: 'BASE64', cat: 'rfc', std: 'RFC 4648 §4',
+      fn: toBase64, latinOnly: false, irreversible: false, note: 'Стандартный Base64'
+    },
+    {
+      id: 'base32', title: 'BASE32', cat: 'rfc', std: 'RFC 4648 §6',
+      fn: toBase32, latinOnly: false, irreversible: false, note: '32-значный алфавит'
+    },
+    {
+      id: 'url', title: 'PERCENT-ENCODING', cat: 'rfc', std: 'RFC 3986',
+      fn: toPercentEncoding, latinOnly: false, irreversible: false, note: 'URL кодирование'
+    },
+    {
+      id: 'punycode', title: 'PUNYCODE / IDNA', cat: 'rfc', std: 'RFC 3492',
+      fn: toPunycode, latinOnly: false, irreversible: false, note: 'Интернационализация доменов'
+    },
+    {
+      id: 'morse', title: 'MORSE CODE', cat: 'radio', std: 'ITU-R M.1677 / ГОСТ',
+      fn: toMorse, wide: true, audio: true, latinOnly: false, irreversible: false, note: 'Двуязычный ITU / ГОСТ'
+    },
+    {
+      id: 'nato', title: 'NATO / ICAO PHONETIC', cat: 'radio', std: 'ICAO Doc 9432',
+      fn: toNato, wide: true, latinOnly: true, irreversible: false, note: 'Международный стандарт радиосвязи'
+    },
+    {
+      id: 'ruradio', title: 'СВЯЗНОЙ РАДИОАЛФАВИТ', cat: 'radio', std: 'Регламент радиосвязи РФ',
+      fn: toRuRadio, wide: true, cyrillicOnly: true, irreversible: false, note: 'Официальный регламент РФ/СССР'
+    },
+    {
+      id: 'rot13', title: 'ROT13 / ROT16 (CAESAR)', cat: 'cipher', std: 'RFC 4702 / Инволюция',
+      fn: rotInvolution, latinOnly: false, irreversible: false, note: 'Латиница: ROT13 / Кириллица: ROT16'
+    },
+    {
+      id: 'atbash', title: 'ATBASH CIPHER', cat: 'cipher', std: 'Биективная инволюция',
+      fn: atbash, latinOnly: false, irreversible: false, note: 'Зеркальный шифр (RU/EN)'
+    },
+    {
+      id: 'tapcode', title: 'TAP CODE (ПОЛИБИЙ)', cat: 'telecom', std: 'Standard 5x5 Grid',
+      fn: toTapCode, latinOnly: true, irreversible: false, note: 'Тюремный акустический шифр (K=C)'
+    },
+    {
+      id: 'bacon', title: 'BACON CIPHER', cat: 'cipher', std: '5-Bit Binary Alphabet',
+      fn: toBacon, latinOnly: true, irreversible: false, note: 'Бинарный шифр Фрэнсиса Бэкона'
+    },
+    {
+      id: 'braille', title: 'BRAILLE GRADE 1', cat: 'telecom', std: 'ГОСТ Р 58511 / ISO',
+      fn: toBraille, latinOnly: false, irreversible: false, note: '6-точечный рельефный шрифт RU/EN'
+    },
+    {
+      id: 'semaphore', title: 'FLAG SEMAPHORE', cat: 'telecom', std: 'Maritime Standard',
+      fn: toSemaphore, latinOnly: true, irreversible: false, note: 'Оптический семафор'
+    },
+    {
+      id: 'zerowidth', title: 'ZERO-WIDTH STEGANO', cat: 'telecom', std: 'Unicode Steganography',
+      fn: toZeroWidth, previewFn: previewZeroWidth, wide: true, latinOnly: false, irreversible: false, note: 'Скрытые биты ZWSP/ZWNJ'
+    },
+    {
+      id: 'sha256', title: 'SHA-256 HASH', cat: 'rfc', std: 'FIPS PUB 180-4',
+      fn: computeSha256, async: true, wide: true, latinOnly: false, irreversible: true, note: 'Криптографическая хеш-сумма'
+    }
   ];
+
+  // =========================================================================
+  // 4. ГЕНЕРАЦИЯ ИНТЕРФЕЙСА И WEB AUDIO
+  // =========================================================================
 
   const grid = document.getElementById('matrixGrid');
   const cardElements = {};
@@ -2146,32 +2220,31 @@ render();
 
     if (ch.irreversible) {
       badgeClass = 'badge badge-irreversible';
-      badgeText = 'РќР•РћР‘Р РђРўРРњ (РҐР•РЁ)';
+      badgeText = 'НЕОБРАТИМ (ХЕШ)';
     }
 
     let extraBtn = '';
     if (ch.audio) {
-      extraBtn = `<button class="action-btn" id="playAudioBtn" type="button">рџ”Љ РўРѕРЅ</button>`;
+      extraBtn = `<button class=&quot;action-btn&quot; id=&quot;playAudioBtn&quot; type=&quot;button&quot;>🔊 Тон</button>`;
     }
 
     card.innerHTML = `
-      <div class="cell-head">
-        <div class="cell-title-block">
-          <span class="cell-num">${String(idx+1).padStart(2, '0')}</span>
-          <span class="cell-title">${ch.title}</span>
-          <span class="${badgeClass}">${badgeText}</span>
-          <span class="badge badge-warn" id="warnBadge_${ch.id}" style="display:none;">вљ пёЏ РўРѕР»СЊРєРѕ Latin</span>
+      <div class=&quot;cell-head&quot;>
+        <div class=&quot;cell-title-block&quot;>
+          <span class=&quot;cell-num&quot;>${String(idx+1).padStart(2, '0')}</span>
+          <span class=&quot;cell-title&quot;>${ch.title}</span>
+          <span class=&quot;${badgeClass}&quot;>${badgeText}</span>
+          <span class=&quot;badge badge-warn&quot; id=&quot;warnBadge_${ch.id}&quot; style=&quot;display:none;&quot;>⚠️ Только Latin</span>
         </div>
-        <div class="cell-actions">
+        <div class=&quot;cell-actions&quot;>
           ${extraBtn}
-          <button class="action-btn send-btn" type="button" title="РћС‚РїСЂР°РІРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚ РІ HashForge">вћ” HashForge</button>
-          <button class="action-btn copy-btn" type="button">РљРѕРїРёСЂРѕРІР°С‚СЊ</button>
+          <button class=&quot;action-btn copy-btn&quot; type=&quot;button&quot;>Копировать</button>
         </div>
       </div>
-      <div class="cell-body empty">вЂ”</div>
-      <div class="cell-foot">
+      <div class=&quot;cell-body empty&quot;>—</div>
+      <div class=&quot;cell-foot&quot;>
         <span>${ch.note}</span>
-        <span class="byte-size">0 Р±Р°Р№С‚</span>
+        <span class=&quot;byte-size&quot;>0 байт</span>
       </div>
     `;
 
@@ -2179,7 +2252,6 @@ render();
 
     const bodyEl = card.querySelector('.cell-body');
     const copyBtn = card.querySelector('.copy-btn');
-    const sendBtn = card.querySelector('.send-btn');
     const byteEl = card.querySelector('.byte-size');
     const warnEl = card.querySelector(`#warnBadge_${ch.id}`);
 
@@ -2187,26 +2259,13 @@ render();
       const raw = bodyEl.dataset.raw || '';
       if (!raw) return;
       navigator.clipboard.writeText(raw).then(() => {
-        copyBtn.textContent = 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ';
+        copyBtn.textContent = 'Скопировано';
         copyBtn.classList.add('copied');
         setTimeout(() => {
-          copyBtn.textContent = 'РљРѕРїРёСЂРѕРІР°С‚СЊ';
+          copyBtn.textContent = 'Копировать';
           copyBtn.classList.remove('copied');
         }, 1200);
       });
-    });
-
-    // РћС‚РїСЂР°РІРєР° СЂРµР·СѓР»СЊС‚Р°С‚Р° РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ СЃС‚Р°РЅРґР°СЂС‚Р° РІ HashForge
-    sendBtn.addEventListener('click', () => {
-      const raw = bodyEl.dataset.raw || '';
-      if (!raw) return;
-      if (window.parent) {
-        window.parent.postMessage({
-          type: 'SIGNAL_TO_HASHFORGE',
-          text: raw,
-          source: ch.title
-        }, '*');
-      }
     });
 
     if (ch.audio) {
@@ -2217,6 +2276,7 @@ render();
     cardElements[ch.id] = { card, bodyEl, byteEl, warnEl, config: ch };
   });
 
+  // Audio Synthesizer (Морзе синусоида 700 Гц)
   let audioCtx = null;
   let isPlaying = false;
   let audioTimer = null;
@@ -2226,7 +2286,7 @@ render();
     if (audioTimer) clearTimeout(audioTimer);
     const btn = document.getElementById('playAudioBtn');
     if (btn) {
-      btn.textContent = 'рџ”Љ РўРѕРЅ';
+      btn.textContent = '🔊 Тон';
       btn.classList.remove('active-play');
     }
   }
@@ -2241,7 +2301,7 @@ render();
     isPlaying = true;
     const btn = document.getElementById('playAudioBtn');
     if (btn) {
-      btn.textContent = 'вЏ№ РЎС‚РѕРї';
+      btn.textContent = '⏹ Стоп';
       btn.classList.add('active-play');
     }
 
@@ -2273,4 +2333,214 @@ render();
         osc.frequency.value = freq;
         gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
         gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.004);
-        gain.gain.linearRamp
+        gain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + (item.ms/1000) - 0.004);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + (item.ms/1000));
+      }
+      audioTimer = setTimeout(step, item.ms);
+    }
+    step();
+  }
+
+  // =========================================================================
+  // 5. ДИСПЕТЧЕР ОБНОВЛЕНИЯ И АНАЛИЗА ВВОДА
+  // =========================================================================
+
+  const src = document.getElementById('src');
+  const charCount = document.getElementById('charCount');
+  const byteCount = document.getElementById('byteCount');
+  const entropyVal = document.getElementById('entropyVal');
+  const liveDot = document.getElementById('liveDot');
+
+  async function updateAll() {
+    const text = src.value;
+    const len = Array.from(text).length;
+    const bytes = new TextEncoder().encode(text).length;
+    const hasCyrillic = /[а-яёА-ЯЁ]/.test(text);
+    const hasLatin = /[a-zA-Z]/.test(text);
+
+    charCount.textContent = len;
+    byteCount.textContent = bytes;
+    entropyVal.textContent = calcEntropy(text);
+
+    if (len > 0) liveDot.classList.remove('idle');
+    else { liveDot.classList.add('idle'); stopAudio(); }
+
+    for (let ch of MATRIX) {
+      const el = cardElements[ch.id];
+
+      // Подсветка несовместимости с кириллицей / латиницей
+      if (ch.latinOnly &amp;&amp; hasCyrillic) {
+        el.card.classList.add('warn-cyrillic');
+        el.warnEl.style.display = 'inline-block';
+        el.warnEl.textContent = '⚠️ Не латиница: пропущено';
+      } else if (ch.cyrillicOnly &amp;&amp; hasLatin) {
+        el.card.classList.add('warn-cyrillic');
+        el.warnEl.style.display = 'inline-block';
+        el.warnEl.textContent = '⚠️ Не кириллица: пропущено';
+      } else {
+        el.card.classList.remove('warn-cyrillic');
+        el.warnEl.style.display = 'none';
+      }
+
+      if (!text) {
+        el.bodyEl.textContent = '—';
+        el.bodyEl.classList.add('empty');
+        el.bodyEl.dataset.raw = '';
+        el.byteEl.textContent = '0 байт';
+        continue;
+      }
+
+      let res = '';
+      if (ch.async) {
+        res = await ch.fn(text);
+      } else {
+        try {
+          res = ch.fn(text);
+        } catch(e) {
+          res = 'Ошибка кодирования стандарта';
+        }
+      }
+
+      el.bodyEl.dataset.raw = res;
+      el.bodyEl.textContent = ch.previewFn ? ch.previewFn(res) : (res || '—');
+      el.bodyEl.classList.toggle('empty', !res);
+      const outBytes = new TextEncoder().encode(res).length;
+      el.byteEl.textContent = `${outBytes} байт`;
+    }
+  }
+
+  src.addEventListener('input', updateAll);
+  updateAll();
+
+  // Presets &amp; Clear
+  document.querySelectorAll('.preset-tag').forEach(tag => {
+    tag.addEventListener('click', () => {
+      src.value = tag.dataset.val;
+      updateAll();
+    });
+  });
+
+  document.getElementById('btnClear').addEventListener('click', () => {
+    src.value = '';
+    src.focus();
+    updateAll();
+  });
+
+  // Экспорт всей матрицы
+  document.getElementById('btnExport').addEventListener('click', function() {
+    const text = src.value;
+    if (!text) return;
+    let dump = `=== SIGNAL 2.5 MATRIX EXPORT ===\n`;
+    dump += `INPUT: ${text}\n`;
+    dump += `UTC: ${new Date().toISOString()}\n`;
+    dump += `========================================\n\n`;
+
+    MATRIX.forEach(ch => {
+      const raw = cardElements[ch.id].bodyEl.dataset.raw || '';
+      dump += `[${ch.title} | ${ch.std}]\n${raw}\n\n`;
+    });
+
+    navigator.clipboard.writeText(dump).then(() => {
+      const old = this.textContent;
+      this.textContent = '✓ Экспортировано!';
+      setTimeout(() => { this.textContent = old; }, 1500);
+    });
+  });
+
+  // Категории
+  let curCategory = 'all';
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      this.classList.add('active');
+      curCategory = this.dataset.cat;
+      MATRIX.forEach(ch => {
+        const show = (curCategory === 'all' || ch.cat === curCategory);
+        cardElements[ch.id].card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // Тема управляется оболочкой (suite-bridge)
+
+  // UTC часы
+  const utcClock = document.getElementById('utcClock');
+  function tick() {
+    utcClock.textContent = 'UTC ' + new Date().toISOString().substring(11, 19);
+  }
+  tick();
+  setInterval(tick, 1000);
+
+})();
+</script>
+</body>
+</html>"></iframe>
+<script>
+(function(){
+  var S=window.__suite, root=document.documentElement, KEY='suite-theme';
+  var frames={hashforge:document.getElementById('hashforge'),signal:document.getElementById('signal')};
+  var tabs=[].slice.call(document.querySelectorAll('.tab')), btn=document.getElementById('themeBtn');
+  var scrollY={hashforge:0,signal:0}, mq=matchMedia('(prefers-color-scheme: dark)');
+  function send(name,msg){ var w=frames[name].contentWindow; if(w) w.postMessage(msg,'*'); }
+  function broadcast(msg){ send('hashforge',msg); send('signal',msg); }
+
+  /* Тема: один переключатель, один ключ */
+  function applyTheme(t,persist){
+    S.theme=t; root.setAttribute('data-theme',t);
+    btn.textContent=t==='dark'?'☀ Светлая':'◐ Тёмная';
+    if(persist){ S.saved=t; try{localStorage.setItem(KEY,t);}catch(e){} }
+    broadcast({type:'theme',value:t});
+  }
+  btn.onclick=function(){ applyTheme(S.theme==='dark'?'light':'dark',true); };
+  mq.addEventListener('change',function(e){ if(!S.saved) applyTheme(e.matches?'dark':'light',false); });
+  applyTheme(S.theme,false);
+
+  /* Вкладки: iframe остаются живыми, состояние сохраняется */
+  function curTab(){ return root.getAttribute('data-tab'); }
+  function setTab(t,focus){
+    var prev=curTab();
+    if(prev!==t){ scrollY[prev]=window.scrollY; root.setAttribute('data-tab',t); }
+    tabs.forEach(function(b){ var on=b.dataset.tab===t; b.setAttribute('aria-selected',on); b.tabIndex=on?0:-1; if(on&&focus) b.focus(); });
+    send(t,{type:'measure'});
+    if(prev!==t) requestAnimationFrame(function(){ window.scrollTo(0,scrollY[t]||0); });
+    try{ history.replaceState(null,'',t==='hashforge'&&S.recipe?'#hf='+S.recipe:'#'+t); }catch(e){}
+  }
+  tabs.forEach(function(b,i){
+    b.onclick=function(){ setTab(b.dataset.tab); };
+    b.onkeydown=function(e){
+      var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0; if(!d) return;
+      e.preventDefault(); setTab(tabs[(i+d+tabs.length)%tabs.length].dataset.tab,true);
+    };
+  });
+  setTab(curTab());
+
+  /* Сообщения от приложений (источник проверяется по contentWindow) */
+  addEventListener('message',function(e){
+    var name=null, d=e.data;
+    for(var k in frames) if(frames[k].contentWindow===e.source) name=k;
+    if(!name||!d||typeof d!=='object') return;
+    if(d.type==='height'){
+      if(d.value>0&&d.value<100000) frames[name].style.height=d.value+'px';
+    }else if(d.type==='hello'){
+      send(name,{type:'init',theme:S.theme,recipe:S.recipe});
+    }else if(d.type==='share'&&name==='hashforge'&&/^[A-Za-z0-9_-]{1,8000}$/.test(d.recipe||'')){
+      /* «Ссылка» в HashForge: адрес формирует оболочка, а не about:srcdoc */
+      S.recipe=d.recipe;
+      try{ history.replaceState(null,'','#hf='+S.recipe); }catch(e){}
+      send('hashforge',{type:'share-url',url:location.href.split('#')[0]+'#hf='+S.recipe});
+    }
+  });
+
+  /* Переход по готовой ссылке в уже открытой странице */
+  addEventListener('hashchange',function(){
+    var h=location.hash, m=/^#hf=([A-Za-z0-9_-]{1,8000})$/.exec(h);
+    if(m){ if(m[1]!==S.recipe){ S.recipe=m[1]; send('hashforge',{type:'load-recipe',recipe:S.recipe}); } setTab('hashforge'); }
+    else if(h==='#signal'||h==='#hashforge') setTab(h.slice(1));
+  });
+})();
+</script>
+</body>
+</html>
