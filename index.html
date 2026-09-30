@@ -1,122 +1,455 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CryptoLab Hub // HashForge & SIGNAL 2.5</title>
+<style>
+  :root, [data-theme="light"] {
+    --shell-bg: #E8EDF5;
+    --shell-header-bg: #FFFFFF;
+    --shell-border: #CBD5E1;
+    --shell-text: #0F172A;
+    --shell-text-dim: #64748B;
+    --shell-accent: #0284C7;
+    --shell-accent-hover: #0369A1;
+    --shell-tab-bg: #F1F5F9;
+    --shell-tab-hover: #E2E8F0;
+    --shell-tab-active-bg: #0284C7;
+    --shell-tab-active-text: #FFFFFF;
+    --shell-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  [data-theme="dark"] {
+    --shell-bg: #06090F;
+    --shell-header-bg: #0E1524;
+    --shell-border: #1F2D47;
+    --shell-text: #F8FAFC;
+    --shell-text-dim: #7E92B0;
+    --shell-accent: #38BDF8;
+    --shell-accent-hover: #7DD3FC;
+    --shell-tab-bg: #151F33;
+    --shell-tab-hover: #1D2A45;
+    --shell-tab-active-bg: #38BDF8;
+    --shell-tab-active-text: #04101E;
+    --shell-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background-color: var(--shell-bg);
+    color: var(--shell-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "JetBrains Mono", monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  /* Shell Header */
+  .shell-header {
+    background: var(--shell-header-bg);
+    border-bottom: 1px solid var(--shell-border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: var(--shell-shadow);
+  }
+
+  .shell-bar {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 10px clamp(12px, 3vw, 28px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand-zone {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .brand-badge {
+    background: var(--shell-accent);
+    color: var(--shell-tab-active-text);
+    font-family: "JetBrains Mono", monospace;
+    font-weight: 800;
+    font-size: 0.72rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.08em;
+  }
+
+  .brand-title {
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: -0.01em;
+  }
+
+  .brand-sub {
+    font-size: 0.74rem;
+    color: var(--shell-text-dim);
+    border-left: 2px solid var(--shell-border);
+    padding-left: 10px;
+    display: inline-block;
+  }
+
+  /* Tabs Switcher */
+  .nav-tabs {
+    display: inline-flex;
+    background: var(--shell-tab-bg);
+    padding: 3px;
+    border-radius: 6px;
+    border: 1px solid var(--shell-border);
+    gap: 4px;
+  }
+
+  .nav-btn {
+    border: none;
+    background: transparent;
+    color: var(--shell-text-dim);
+    font-family: inherit;
+    font-size: 0.8rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-btn:hover:not(.active) {
+    background: var(--shell-tab-hover);
+    color: var(--shell-text);
+  }
+
+  .nav-btn.active {
+    background: var(--shell-tab-active-bg);
+    color: var(--shell-tab-active-text);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .tab-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.7;
+  }
+
+  /* Shell Controls */
+  .shell-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-theme {
+    background: var(--shell-header-bg);
+    border: 1px solid var(--shell-border);
+    color: var(--shell-text);
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s;
+  }
+
+  .btn-theme:hover {
+    border-color: var(--shell-accent);
+    color: var(--shell-accent);
+  }
+
+  /* Frame Panes Container */
+  main {
+    flex: 1;
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .tab-pane {
+    width: 100%;
+    display: none;
+  }
+
+  .tab-pane.active {
+    display: block;
+  }
+
+  iframe.app-frame {
+    width: 100%;
+    border: none;
+    display: block;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  /* Footer */
+  footer.shell-footer {
+    border-top: 1px solid var(--shell-border);
+    background: var(--shell-header-bg);
+    padding: 10px clamp(12px, 3vw, 28px);
+    font-size: 0.72rem;
+    color: var(--shell-text-dim);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  @media (max-width: 768px) {
+    .brand-sub { display: none; }
+    .shell-bar { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<header class="shell-header">
+  <div class="shell-bar">
+    <div class="brand-zone">
+      <span class="brand-badge">CRYPTOLAB</span>
+      <span class="brand-title">HASHFORGE &amp; SIGNAL</span>
+      <span class="brand-sub">РР·РѕР»РёСЂРѕРІР°РЅРЅС‹Р№ РєСЂРёРїС‚Рѕ-РёРЅР¶РµРЅРµСЂРЅС‹Р№ РєРѕРјРїР»РµРєСЃ</span>
+    </div>
+
+    <!-- РќР°РІРёРіР°С†РёРѕРЅРЅС‹Рµ РІРєР»Р°РґРєРё -->
+    <nav class="nav-tabs" role="tablist">
+      <button class="nav-btn active" id="tabBtnHf" data-target="pane-hf" role="tab" aria-selected="true">
+        <span class="tab-indicator"></span> HashForge (РҐСЌС€Рё)
+      </button>
+      <button class="nav-btn" id="tabBtnSig" data-target="pane-sig" role="tab" aria-selected="false">
+        <span class="tab-indicator"></span> SIGNAL 2.5 (РњР°С‚СЂРёС†Р°)
+      </button>
+    </nav>
+
+    <!-- Р•РґРёРЅС‹Р№ РїРµСЂРµРєР»СЋС‡Р°С‚РµР»СЊ С‚РµРјС‹ -->
+    <div class="shell-controls">
+      <button class="btn-theme" id="shellThemeBtn" type="button" aria-label="РЎРјРµРЅРёС‚СЊ С‚РµРјСѓ">
+        <span id="shellThemeIcon">в—ђ</span>
+        <span id="shellThemeLabel">РўРµРјР°</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- РџР°РЅРµР»СЊ HashForge -->
+  <div class="tab-pane active" id="pane-hf" role="tabpanel">
+    <iframe class="app-frame" id="frame-hashforge" title="HashForge Crypto Lab" allow="clipboard-write" scrolling="no"></iframe>
+  </div>
+
+  <!-- РџР°РЅРµР»СЊ SIGNAL 2.5 -->
+  <div class="tab-pane" id="pane-sig" role="tabpanel">
+    <iframe class="app-frame" id="frame-signal" title="SIGNAL 2.5 Encoder Matrix" allow="clipboard-write" scrolling="no"></iframe>
+  </div>
+</main>
+
+<footer class="shell-footer">
+  <span>100% Client-Side Evaluation В· WebCrypto API + RFC Protocols В· No Tracking</span>
+  <span id="shellClock">UTC 00:00:00</span>
+</footer>
+
+<!-- =========================================================================
+     РЁРђР‘Р›РћРќ 1: HASHFORGE OFFLINE CRYPTO LAB
+     ========================================================================= -->
+<template id="tpl-hashforge">
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Хэш по символам / словам / фразе — Advanced</title>
+<title>HashForge</title>
 <style>
 :root {
-  --bg: #E8ECF6;
+  --bg: #F4F6FB;
   --panel: #FFFFFF;
-  --line: #C4CEE6;
-  --text: #0D1430;
-  --mute: #55638C;
-  --acc: #D9480F;
+  --panel-alt: #EDF1F7;
+  --line: #D3DDEB;
+  --line-strong: #A8B8D0;
+  --text: #0B132B;
+  --mute: #5A6E85;
+  --acc: #0284C7;
+  --acc-glow: rgba(2, 132, 199, 0.12);
+  --acc-alt: #EA580C;
   --on-acc: #FFFFFF;
-  --grid: rgba(13,20,48,.06);
-  --ok: #0a7a3e;
-  --display: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
+  --grid: rgba(11, 19, 43, 0.04);
+  --ok: #059669;
+  --warn: #D97706;
+  --display: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", "SF Mono", "Cascadia Code", Menlo, Consolas, monospace;
+  --radius: 6px;
+  --shadow: 0 1px 3px rgba(11, 19, 43, 0.05), 0 4px 12px rgba(11, 19, 43, 0.03);
 }
+
 [data-theme="dark"] {
-  --bg: #0A0F22;
-  --panel: #111A36;
-  --line: #26335E;
-  --text: #E5EBFF;
-  --mute: #8F9CC8;
-  --acc: #FF6B2C;
-  --on-acc: #160800;
-  --grid: rgba(140,160,255,.07);
-  --ok: #3dd68c;
+  --bg: #090D16;
+  --panel: #111726;
+  --panel-alt: #172033;
+  --line: #1F2D47;
+  --line-strong: #334466;
+  --text: #E6EDF8;
+  --mute: #7E92B0;
+  --acc: #38BDF8;
+  --acc-glow: rgba(56, 189, 248, 0.15);
+  --acc-alt: #FB923C;
+  --on-acc: #04101E;
+  --grid: rgba(230, 237, 248, 0.035);
+  --ok: #34D399;
+  --warn: #FBBF24;
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
 }
+
 *, *::before, *::after { box-sizing: border-box; }
-body {
+
+html, body {
   margin: 0;
+  padding: 0;
+  overflow-y: hidden !important;
+  min-height: auto !important;
+}
+
+body {
   background-color: var(--bg);
-  background-image: linear-gradient(var(--grid) 1px, transparent 1px),
-                    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 24px 24px;
   color: var(--text);
-  font: 400 .95rem/1.55 var(--mono);
+  font: 400 .9rem/1.5 var(--mono);
+  -webkit-font-smoothing: antialiased;
 }
+
 main {
-  max-width: 980px;
+  max-width: 1040px;
   margin: 0 auto;
-  padding: clamp(16px, 4vw, 48px) clamp(14px, 3vw, 28px);
+  padding: 20px 16px 36px 16px;
   display: grid;
-  gap: 16px;
+  gap: 14px;
 }
+
 header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
 }
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-badge {
+  background: var(--acc);
+  color: var(--on-acc);
+  font: 800 .75rem/1 var(--mono);
+  padding: 4px 7px;
+  border-radius: 4px;
+  letter-spacing: .08em;
+}
+
 h1 {
-  font: 800 clamp(1.6rem, 5.5vw, 2.6rem)/1.05 var(--display);
+  font: 800 1.25rem/1.2 var(--display);
+  margin: 0;
   letter-spacing: -.02em;
-  margin: 0 0 6px;
 }
-.lead { margin: 0; max-width: 58ch; color: var(--mute); font-size: .9rem; }
-.theme-btn {
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font: 600 .8rem var(--mono);
-  color: var(--text);
-  cursor: pointer;
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .75rem;
+  color: var(--mute);
 }
+
+.led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 8px var(--ok);
+  display: inline-block;
+}
+
+.led.warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+
 .panel {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: var(--radius);
   padding: 14px 16px;
+  box-shadow: var(--shadow);
 }
+
 .lab, legend {
-  font-size: .78rem;
+  font: 700 .72rem/1.2 var(--mono);
+  text-transform: uppercase;
+  letter-spacing: .06em;
   color: var(--mute);
   padding: 0;
-  margin-bottom: 6px;
-  display: block;
+  margin-bottom: 7px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
 textarea, input[type=text], input[type=number] {
   width: 100%;
-  background: transparent;
+  background: var(--panel-alt);
   color: var(--text);
   border: 1px solid var(--line);
   border-radius: 4px;
-  font: 400 1rem/1.4 var(--mono);
-  padding: 9px 11px;
+  font: 400 .95rem/1.45 var(--mono);
+  padding: 8px 10px;
+  transition: border-color .15s, background .15s;
 }
+
 textarea {
-  font-size: clamp(1.05rem, 3vw, 1.35rem);
-  min-height: 78px;
+  min-height: 84px;
   resize: vertical;
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
 }
+
+textarea:focus, input:focus {
+  outline: none;
+  border-color: var(--acc);
+  background: var(--panel);
+  box-shadow: 0 0 0 2px var(--acc-glow);
+}
+
 .hide { -webkit-text-security: disc; }
-textarea:focus-visible, input:focus-visible, button:focus-visible {
-  outline: 2px solid var(--acc);
-  outline-offset: 2px;
-}
-.two, .ctl {
+
+.grid-cols {
   display: grid;
-  gap: 14px 20px;
+  gap: 12px 16px;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
-.two {
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  margin-top: 12px;
-}
-.ctl { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
-fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+
 .chips {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
   align-items: center;
 }
-.chip { position: relative; }
+
+.chip {
+  position: relative;
+  user-select: none;
+}
+
 .chip input {
   position: absolute;
   opacity: 0;
@@ -124,286 +457,445 @@ fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
   margin: 0;
   cursor: pointer;
 }
+
 .chip span {
-  display: block;
-  padding: 6px 10px;
+  display: inline-block;
+  padding: 5px 9px;
+  background: var(--panel-alt);
   border: 1px solid var(--line);
   border-radius: 4px;
-  font: 600 .78rem var(--mono);
-}
-.chip input:checked + span {
-  background: var(--acc);
-  border-color: var(--acc);
-  color: var(--on-acc);
-}
-#cs, #customLen {
-  width: 5.8rem;
-  padding: 5px 7px;
-  font-size: .78rem;
-}
-#rc {
-  margin: 0;
-  font-size: .82rem;
+  font: 600 .74rem var(--mono);
   color: var(--mute);
-  line-height: 1.45;
+  transition: all .12s ease-in-out;
 }
-.res-head {
+
+.chip input:hover + span { border-color: var(--line-strong); color: var(--text); }
+.chip input:checked + span { background: var(--acc); border-color: var(--acc); color: var(--on-acc); }
+.chip input:disabled + span { opacity: .35; cursor: not-allowed; }
+
+.inline-input {
+  width: 5.4rem !important;
+  padding: 4px 6px !important;
+  font-size: .75rem !important;
+  display: inline-block;
+}
+
+.res-header {
   display: flex;
   flex-wrap: wrap;
   gap: 8px 12px;
-  align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  align-items: center;
+  margin-bottom: 8px;
 }
-.res-head h2 { margin: 0; font: 700 1rem var(--display); }
-.btn-row { display: flex; flex-wrap: wrap; gap: 6px; }
-button.action {
+
+.btn-group { display: flex; flex-wrap: wrap; gap: 6px; }
+
+button.act {
   background: var(--acc);
   color: var(--on-acc);
   border: 0;
   border-radius: 4px;
-  padding: 8px 13px;
-  font: 700 .78rem var(--display);
+  padding: 6px 12px;
+  font: 700 .75rem var(--mono);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: opacity .15s;
 }
-button.action.secondary {
-  background: transparent;
+
+button.act.sec {
+  background: var(--panel-alt);
   color: var(--text);
   border: 1px solid var(--line);
 }
-button.action:disabled { opacity: .4; cursor: not-allowed; }
+
+button.act.sec:hover { border-color: var(--acc); }
+button.act:hover { opacity: .9; }
+button.act:disabled { opacity: .4; cursor: not-allowed; }
+
 #out {
-  font-size: .88rem;
-  line-height: 1.55;
+  font-size: .86rem;
+  line-height: 1.6;
   word-break: break-all;
-  background: var(--bg);
+  background: var(--panel-alt);
   border: 1px solid var(--line);
   border-radius: 4px;
-  padding: 11px;
-  min-height: 3.2rem;
-  max-height: 12rem;
-  overflow: auto;
+  padding: 10px 12px;
+  min-height: 3.4rem;
+  max-height: 11rem;
+  overflow-y: auto;
+  font-family: var(--mono);
 }
+
 #out .a { color: var(--text); }
 #out .b { color: var(--mute); }
 #out .sp { color: var(--acc); font-weight: 700; }
-#out .ph { color: var(--mute); }
-.meta {
+#out .ph { color: var(--mute); font-style: italic; }
+
+.status-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 16px;
+  gap: 8px 16px;
   margin-top: 8px;
+  font-size: .72rem;
+  color: var(--mute);
+  align-items: center;
+}
+
+#st {
+  color: var(--acc-alt);
+  font-weight: 700;
+  margin-left: auto;
+}
+
+#recipe {
+  margin: 0;
   font-size: .78rem;
   color: var(--mute);
+  line-height: 1.45;
 }
-#st { color: var(--acc); font-weight: 700; }
+
 #chain {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(148px, 1fr));
-  gap: 9px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 8px;
 }
+
 .tile {
-  display: block;
-  text-align: left;
-  cursor: pointer;
   background: var(--panel);
-  color: var(--text);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 9px;
-  font: inherit;
-}
-.tile:hover { border-color: var(--acc); }
-.tile span { display: block; }
-.g {
-  font: 800 1.7rem/1.25 var(--display);
-  height: 2.3rem;
-  overflow: hidden;
-  white-space: nowrap;
-}
-.u { font-size: .65rem; color: var(--mute); }
-.fp { display: flex !important; gap: 2px; height: 8px; margin: 6px 0; }
-.fp i { flex: 1; border-radius: 1px; }
-.h { font-size: .65rem; line-height: 1.35; word-break: break-all; }
-@keyframes grow { from { transform: scaleX(0); } }
-.new .fp i {
-  transform-origin: left;
-  animation: grow .32s both;
-}
-@media (prefers-reduced-motion: reduce) {
-  .new .fp i { animation: none; }
-}
-.note {
-  margin: 4px 0 0;
-  font-size: .78rem;
-  color: var(--mute);
-  max-width: 72ch;
-}
-.history {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin-top: 8px;
-}
-.hist-item {
-  font-size: .75rem;
-  padding: 4px 9px;
   border: 1px solid var(--line);
   border-radius: 4px;
-  background: var(--bg);
+  padding: 8px 10px;
   cursor: pointer;
-  max-width: 180px;
+  text-align: left;
+  font: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: border-color .15s, transform .1s;
+}
+
+.tile:hover {
+  border-color: var(--acc);
+  transform: translateY(-1px);
+}
+
+.tile-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.tile-g {
+  font: 800 1.25rem/1.2 var(--display);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--text);
 }
-.hist-item:hover { border-color: var(--acc); }
+
+.tile-u {
+  font-size: .63rem;
+  color: var(--mute);
+  font-family: var(--mono);
+}
+
+.fp {
+  display: flex;
+  gap: 2px;
+  height: 5px;
+  margin: 3px 0;
+}
+
+.fp i {
+  flex: 1;
+  border-radius: 1px;
+}
+
+.tile-h {
+  font-size: .66rem;
+  line-height: 1.35;
+  word-break: break-all;
+  color: var(--mute);
+}
+
+.tile:hover .tile-h { color: var(--text); }
+
+.history-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.hist-chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--panel-alt);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  font-size: .72rem;
+  padding-left: 7px;
+  max-width: 220px;
+}
+
+.hist-chip button.hist-text {
+  background: none;
+  border: none;
+  color: var(--text);
+  font: inherit;
+  cursor: pointer;
+  padding: 4px 6px 4px 0;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.hist-chip button.hist-del {
+  background: none;
+  border: none;
+  color: var(--mute);
+  cursor: pointer;
+  padding: 4px 6px;
+  font-weight: bold;
+}
+
+.hist-chip button.hist-del:hover { color: var(--acc-alt); }
+
+.limit-warning {
+  grid-column: 1 / -1;
+  background: var(--panel-alt);
+  border: 1px dashed var(--line-strong);
+  border-radius: 4px;
+  padding: 8px 12px;
+  text-align: center;
+  font-size: .75rem;
+  color: var(--mute);
+}
+
+.note {
+  font-size: .75rem;
+  color: var(--mute);
+  margin: 0;
+  line-height: 1.5;
+}
+.chip input:focus-visible + span { outline: 2px solid var(--acc); outline-offset: 2px; }
 </style>
 </head>
 <body>
+
 <main>
-<header>
-  <div>
-    <h1>Хэш по символам, словам или фразе</h1>
-    <p class="lead">Один файл · полностью офлайн · выберите единицу хэширования и позицию соли</p>
-  </div>
-  <button type="button" class="theme-btn" id="themeBtn" title="Сменить тему">Тема</button>
-</header>
+  <header>
+    <div class="brand">
+      <span class="brand-badge">HASHFORGE</span>
+      <h1>РљСЂРёРїС‚РѕРіСЂР°С„РёС‡РµСЃРєРёР№ РєРѕРјР±Р°Р№РЅ</h1>
+    </div>
+    <div class="header-status">
+      <span class="led" id="cryptoLed"></span>
+      <span id="cryptoStatus">Crypto API ready</span>
+    </div>
+  </header>
 
-<section class="panel">
-  <label class="lab" for="t">Кодовое слово или фраза</label>
-  <textarea id="t" spellcheck="false" autocomplete="off" placeholder="Введите слово, фразу или текст…"></textarea>
-  <div class="two">
-    <div>
-      <label class="lab" for="s">Соль (необязательно)</label>
-      <input type="text" id="s" autocomplete="off" placeholder="Добавляется к каждому элементу">
+  <!-- Input Section -->
+  <section class="panel">
+    <div class="lab">
+      <span>Р’С…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ</span>
+      <span id="tMeta">0 СЃРёРјРІ.</span>
     </div>
-    <div>
-      <label class="lab" for="off">Начать хэш с символа №</label>
-      <input type="number" id="off" min="1" value="1">
+    <textarea id="t" spellcheck="false" autocomplete="off" placeholder="Р’РІРµРґРёС‚Рµ СЃРёРјРІРѕР»С‹, СЃР»РѕРІР° РёР»Рё С„СЂР°Р·Сѓ РґР»СЏ СЂР°СЃС‡С‘С‚Р°..."></textarea>
+    
+    <div class="grid-cols" style="margin-top:12px;">
+      <div>
+        <label class="lab" for="s">РЎРѕР»СЊ / РљР»СЋС‡ HMAC</label>
+        <input type="text" id="s" autocomplete="off" placeholder="РћРїС†РёРѕРЅР°Р»СЊРЅР°СЏ СЃРѕР»СЊ РёР»Рё СЃРµРєСЂРµС‚">
+      </div>
+      <div>
+        <label class="lab" for="off">РЎРјРµС‰РµРЅРёРµ РІ СЃС‚СЂРѕРєРµ С…СЌС€Р° (СЃ СЃРёРјРІРѕР»Р° в„–)</label>
+        <input type="number" id="off" min="1" value="1">
+      </div>
     </div>
-  </div>
-  <div class="two" style="margin-top:12px">
-    <fieldset>
-      <legend class="lab">Единица хэширования</legend>
-      <div class="chips" id="unit"></div>
+
+    <div class="grid-cols" style="margin-top:12px;">
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend>Р•РґРёРЅРёС†Р° РґРµР»РµРЅРёСЏ</legend>
+        <div class="chips" id="unit"></div>
+      </fieldset>
+      <fieldset style="border:0;padding:0;margin:0">
+        <legend>РџРѕР·РёС†РёСЏ СЃРѕР»Рё</legend>
+        <div class="chips" id="saltpos"></div>
+      </fieldset>
+    </div>
+
+    <div class="grid-cols" style="margin-top:12px;">
+      <div>
+        <label class="lab" for="prefix">РџСЂРµС„РёРєСЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°</label>
+        <input type="text" id="prefix" placeholder="РЅР°РїСЂ: ID_">
+      </div>
+      <div>
+        <label class="lab" for="suffix">РЎСѓС„С„РёРєСЃ СЂРµР·СѓР»СЊС‚Р°С‚Р°</label>
+        <input type="text" id="suffix" placeholder="РЅР°РїСЂ: .chk">
+      </div>
+    </div>
+  </section>
+
+  <!-- Controls Section -->
+  <section class="panel grid-cols">
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend>РђР»РіРѕСЂРёС‚Рј</legend>
+      <div class="chips" id="algo"></div>
     </fieldset>
-    <fieldset>
-      <legend class="lab">Позиция соли</legend>
-      <div class="chips" id="saltpos"></div>
+
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend>Р¤РѕСЂРјР°С‚ РІС‹РІРѕРґР°</legend>
+      <div class="chips" id="fmt"></div>
     </fieldset>
-  </div>
-  <div class="two" style="margin-top:12px">
-    <div>
-      <label class="lab" for="prefix">Префикс итоговой строки</label>
-      <input type="text" id="prefix" placeholder="например: HASH_">
+
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend>Р”Р»РёРЅР° Р±Р»РѕРєР°</legend>
+      <div class="chips" id="len">
+        <input type="number" id="customLen" class="inline-input" min="1" max="128" placeholder="СЃРІРѕСЏ" aria-label="РЎРІРѕСЏ РґР»РёРЅР°">
+      </div>
+    </fieldset>
+
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend>Р Р°Р·РґРµР»РёС‚РµР»СЊ</legend>
+      <div class="chips" id="sep">
+        <input type="text" id="cs" class="inline-input" maxlength="8" placeholder="СЃРІРѕР№" aria-label="РЎРІРѕР№ СЂР°Р·РґРµР»РёС‚РµР»СЊ">
+      </div>
+    </fieldset>
+  </section>
+
+  <!-- Options -->
+  <section class="panel">
+    <fieldset style="border:0;padding:0;margin:0">
+      <legend>РџР°СЂР°РјРµС‚СЂС‹ РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ</legend>
+      <div class="chips" id="opt"></div>
+    </fieldset>
+  </section>
+
+  <!-- Recipe Display -->
+  <section class="panel">
+    <div class="lab">РљРѕРЅС„РёРіСѓСЂР°С†РёСЏ РїРѕС‚РѕРєР° (Recipe)</div>
+    <p id="recipe">...</p>
+  </section>
+
+  <!-- Main Output -->
+  <section class="panel">
+    <div class="res-header">
+      <div class="lab" style="margin:0">Р РµР·СѓР»СЊС‚РёСЂСѓСЋС‰РёР№ РїРѕС‚РѕРє</div>
+      <div class="btn-group">
+        <button type="button" class="act sec" id="clearBtn">РЎР±СЂРѕСЃ</button>
+        <button type="button" class="act sec" id="shareBtn">РЎСЃС‹Р»РєР°</button>
+        <button type="button" class="act sec" id="exportBtn">Р­РєСЃРїРѕСЂС‚</button>
+        <button type="button" class="act" id="copyBtn">РљРѕРїРёСЂРѕРІР°С‚СЊ</button>
+      </div>
     </div>
-    <div>
-      <label class="lab" for="suffix">Суффикс итоговой строки</label>
-      <input type="text" id="suffix" placeholder="например: _END">
+    <div id="out"></div>
+    <div class="status-row">
+      <span>Р­Р»РµРјРµРЅС‚РѕРІ: <b id="n">0</b></span>
+      <span>Р”Р»РёРЅР° СЃС‚СЂРѕРєРё: <b id="l">0</b></span>
+      <span id="st" role="status"></span>
     </div>
-  </div>
-</section>
+  </section>
 
-<section class="panel ctl" aria-label="Настройки">
-  <fieldset>
-    <legend>Алгоритм</legend>
-    <div class="chips" id="algo"></div>
-  </fieldset>
-  <fieldset>
-    <legend>Длина каждого хэша</legend>
-    <div class="chips" id="len">
-      <input type="number" id="customLen" min="1" max="128" placeholder="своя" aria-label="Своя длина">
+  <!-- Visual Matrix -->
+  <section>
+    <div class="lab" id="chainTitle" style="margin-bottom:8px">РњР°С‚СЂРёС†Р° С…СЌС€РµР№</div>
+    <div id="chain"></div>
+  </section>
+
+  <!-- History Panel -->
+  <section class="panel" id="histPanel" style="display:none">
+    <div class="res-header">
+      <div class="lab" style="margin:0">РќРµРґР°РІРЅРёР№ РІРІРѕРґ (РЅРµ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РїСЂРё РІРєР»СЋС‡С‘РЅРЅРѕР№ РјР°СЃРєРµ)</div>
+      <button type="button" class="act sec" id="clearHistBtn" style="padding:3px 8px;font-size:.7rem">РћС‡РёСЃС‚РёС‚СЊ РІСЃС‘</button>
     </div>
-  </fieldset>
-  <fieldset>
-    <legend>Разделитель</legend>
-    <div class="chips" id="sep">
-      <input type="text" id="cs" maxlength="8" placeholder="свой" aria-label="Свой разделитель">
-    </div>
-  </fieldset>
-  <fieldset>
-    <legend>Параметры рецепта</legend>
-    <div class="chips" id="opt"></div>
-  </fieldset>
-</section>
+    <div class="history-box" id="history"></div>
+  </section>
 
-<section class="panel">
-  <h2 style="margin:0 0 8px;font:700 1rem var(--display)">Рецепт</h2>
-  <p id="rc"></p>
-</section>
-
-<section class="panel">
-  <div class="res-head">
-    <h2>Готовая строка</h2>
-    <div class="btn-row">
-      <button type="button" class="action secondary" id="clearBtn">Очистить</button>
-      <button type="button" class="action secondary" id="exportBtn">Экспорт</button>
-      <button type="button" class="action" id="copy">Скопировать</button>
-    </div>
-  </div>
-  <div id="out"></div>
-  <div class="meta">
-    <span>Символов: <b id="n">0</b></span>
-    <span>Длина: <b id="l">0</b></span>
-    <span id="st" role="status"></span>
-  </div>
-</section>
-
-<section>
-  <h2 style="font:700 1rem var(--display);margin:0 0 10px" id="chainTitle">Хэш каждого символа</h2>
-  <div id="chain"></div>
-</section>
-
-<section class="panel" id="histPanel" style="display:none">
-  <h2 style="margin:0 0 8px;font:700 .95rem var(--display)">Недавние</h2>
-  <div class="history" id="history"></div>
-</section>
-
-<p class="note">
-  Всё считается только на вашем устройстве. MD5 встроен в файл. SHA-семейство использует Web Crypto API браузера.
-  Нажмите на плитку, чтобы скопировать хеш отдельного элемента (символа, слова или фразы — в зависимости от выбранного режима).
-</p>
+  <p class="note">
+    вљЎ 100% РєР»РёРµРЅС‚СЃРєР°СЏ РѕР±СЂР°Р±РѕС‚РєР°. MD5 Рё HMAC-MD5 РІС‹С‡РёСЃР»СЏСЋС‚СЃСЏ РІСЃС‚СЂРѕРµРЅРЅС‹Рј JS-СЏРґСЂРѕРј, СЃРµРјРµР№СЃС‚РІРѕ SHA вЂ” С‡РµСЂРµР· РЅР°С‚РёРІРЅС‹Р№ WebCrypto API.
+  </p>
 </main>
 
 <script>
 const $ = id => document.getElementById(id);
-const el = (t, c, x) => {
-  const e = document.createElement(t);
-  if (c) e.className = c;
-  if (x != null) e.textContent = x;
-  return e;
+const el = (tag, cls, txt) => {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (txt != null) node.textContent = txt;
+  return node;
 };
 const enc = new TextEncoder();
-const S = window.crypto && crypto.subtle;
-const seg = window.Intl && Intl.Segmenter
-  ? new Intl.Segmenter(undefined, { granularity: 'grapheme' })
-  : null;
+const hasCrypto = !!(window.crypto && crypto.subtle);
+
+if (!hasCrypto) {
+  $('cryptoLed').className = 'led warn';
+  $('cryptoStatus').textContent = 'WebCrypto РЅРµРґРѕСЃС‚СѓРїРµРЅ (С‚РѕР»СЊРєРѕ MD5)';
+}
+
+// Unicode-СЃРµРіРјРµРЅС‚Р°С†РёСЏ
+const seg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : null;
 const splitChars = t => seg ? Array.from(seg.segment(t), x => x.segment) : Array.from(t);
 const splitWords = t => (t.match(/\S+/g) || []);
-function split(t, unit) {
+function splitText(t, unit) {
   if (unit === 'word') return splitWords(t);
-  if (unit === 'phrase') return t === '' ? [] : [t];
+  if (unit === 'phrase') return t.trim() === '' ? [] : [t];
   return splitChars(t);
 }
-const SHOW = { ' ': '␠', '\n': '↵', '\t': '⇥' };
 
-const chk = id => document.querySelector('#' + id + ' input:checked')?.value;
-const flag = v => document.querySelector('#opt input[value="' + v + '"]')?.checked;
-const hex = b => Array.from(new Uint8Array(b), x => x.toString(16).padStart(2, '0')).join('');
+const SHOW_CHAR = { ' ': 'вђ ', '\n': 'в†µ', '\t': 'в‡Ґ' };
+const getRadio = id => document.querySelector('#' + id + ' input:checked')?.value;
+const getFlag = v => !!document.querySelector('#opt input[value="' + v + '"]')?.checked;
 
-/* ——— MD5 (чистый JS) ——— */
-function md5(str) {
-  const b = enc.encode(str), n = b.length;
+function bytesToHex(buf) {
+  const b = new Uint8Array(buf);
+  let s = '';
+  for (let i = 0; i < b.length; i++) s += b[i].toString(16).padStart(2, '0');
+  return s;
+}
+
+function bytesToBase64(buf) {
+  const b = new Uint8Array(buf);
+  let bin = '';
+  for (let i = 0; i < b.length; i++) bin += String.fromCharCode(b[i]);
+  return btoa(bin);
+}
+
+function bytesToBase64Url(buf) {
+  return bytesToBase64(buf).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function formatDigest(buf, fmt) {
+  if (fmt === 'b64') return bytesToBase64(buf);
+  if (fmt === 'b64url') return bytesToBase64Url(buf);
+  return bytesToHex(buf);
+}
+
+function md5Bytes(bytes) {
+  const n = bytes.length;
   const len = ((n + 8 >> 6) + 1) * 16;
   const x = new Int32Array(len);
-  for (let i = 0; i < n; i++) x[i >> 2] |= b[i] << ((i % 4) * 8);
+  for (let i = 0; i < n; i++) x[i >> 2] |= bytes[i] << ((i % 4) * 8);
   x[n >> 2] |= 0x80 << ((n % 4) * 8);
-  x[len - 2] = n << 3;
-  x[len - 1] = n >>> 29;
-  const K = [], s = [7,12,17,22, 5,9,14,20, 4,11,16,23, 6,10,15,21];
-  for (let i = 0; i < 64; i++) K[i] = Math.floor(Math.abs(Math.sin(i + 1)) * 4294967296) | 0;
+  x[len - 2] = (n * 8) & 0xffffffff;
+  x[len - 1] = Math.floor(n / 0x20000000);
+
+  const K = [
+    0xd76aa478, 0xe8c7b756, 0x242070db, 0xc1bdceee, 0xf57c0faf, 0x4787c62a, 0xa8304613, 0xfd469501,
+    0x698098d8, 0x8b44f7af, 0xffff5bb1, 0x895cd7be, 0x6b901122, 0xfd987193, 0xa679438e, 0x49b40821,
+    0xf61e2562, 0xc040b340, 0x265e5a51, 0xe9b6c7aa, 0xd62f105d, 0x02441453, 0xd8a1e681, 0xe7d3fbc8,
+    0x21e1cde6, 0xc33707d6, 0xf4d50d87, 0x455a14ed, 0xa9e3e905, 0xfcefa3f8, 0x676f02d9, 0x8d2a4c8a,
+    0xfffa3942, 0x8771f681, 0x6d9d6122, 0xfde5380c, 0xa4beea44, 0x4bdecfa9, 0xf6bb4b60, 0xbebfbc70,
+    0x289b7ec6, 0xeaa127fa, 0xd4ef3085, 0x04881d05, 0xd9d4d039, 0xe6db99e5, 0x1fa27cf8, 0xc4ac5665,
+    0xf4292244, 0x432aff97, 0xab9423a7, 0xfc93a039, 0x655b59c3, 0x8f0ccc92, 0xffeff47d, 0x85845dd1,
+    0x6fa87e4f, 0xfe2ce6e0, 0xa3014314, 0x4e0811a1, 0xf7537e82, 0xbd3af235, 0x2ad7d2bb, 0xeb86d391
+  ];
+  const s = [7,12,17,22, 5,9,14,20, 4,11,16,23, 6,10,15,21];
   let a0 = 0x67452301, b0 = 0xefcdab89 | 0, c0 = 0x98badcfe | 0, d0 = 0x10325476;
+
   for (let o = 0; o < len; o += 16) {
     let A = a0, B = b0, C = c0, D = d0;
     for (let i = 0; i < 64; i++) {
@@ -419,276 +911,461 @@ function md5(str) {
     }
     a0 = (a0 + A) | 0; b0 = (b0 + B) | 0; c0 = (c0 + C) | 0; d0 = (d0 + D) | 0;
   }
-  return [a0, b0, c0, d0].map(v => {
-    let h = '';
-    for (let i = 0; i < 4; i++) h += ((v >>> (i * 8)) & 255).toString(16).padStart(2, '0');
-    return h;
-  }).join('');
+  const out = new Uint8Array(16);
+  [a0, b0, c0, d0].forEach((v, i) => {
+    for (let j = 0; j < 4; j++) out[i * 4 + j] = (v >>> (j * 8)) & 0xff;
+  });
+  return out;
 }
 
-async function H(algo, s) {
-  if (algo === 'MD5') return md5(s);
-  if (!S) throw new Error('SHA недоступен — выберите MD5');
-  return hex(await S.digest(algo, enc.encode(s)));
+const BLOCK = { 'MD5': 64, 'SHA-1': 64, 'SHA-256': 64, 'SHA-384': 128, 'SHA-512': 128 };
+
+async function hashBytes(algo, bytes) {
+  if (algo === 'MD5') return md5Bytes(bytes);
+  if (!hasCrypto) throw new Error('WebCrypto РЅРµРґРѕСЃС‚СѓРїРµРЅ РґР»СЏ SHA');
+  return new Uint8Array(await crypto.subtle.digest(algo, bytes));
 }
 
-/* ——— UI helpers ——— */
-function group(id, type, items, def) {
-  const box = $(id);
+async function hmacBytes(algo, keyBytes, msgBytes) {
+  const B = BLOCK[algo];
+  const k = keyBytes.length > B ? await hashBytes(algo, keyBytes) : keyBytes;
+  const ipad = new Uint8Array(B + msgBytes.length);
+  const opad = new Uint8Array(B);
+  for (let i = 0; i < B; i++) {
+    const kb = i < k.length ? k[i] : 0;
+    ipad[i] = kb ^ 0x36;
+    opad[i] = kb ^ 0x5c;
+  }
+  ipad.set(msgBytes, B);
+  const inner = await hashBytes(algo, ipad);
+  const outer = new Uint8Array(B + inner.length);
+  outer.set(opad);
+  outer.set(inner, B);
+  return hashBytes(algo, outer);
+}
+
+async function computeDigest(algo, text, salt = '', isHmac = false) {
+  const data = enc.encode(text);
+  if (isHmac) return hmacBytes(algo, enc.encode(salt), data);
+  return hashBytes(algo, data);
+}
+
+function makeChips(boxId, type, items, def) {
+  const box = $(boxId);
   const tail = box.querySelector('input[type=text], input[type=number]');
-  items.forEach(([v, t]) => {
+  items.forEach(([val, label]) => {
     const l = el('label', 'chip');
-    const i = el('input');
-    i.type = type; i.name = id; i.value = v;
-    if (v === def) i.checked = true;
-    i.addEventListener('change', render);
-    l.append(i, el('span', '', t));
+    const inp = el('input');
+    inp.type = type;
+    inp.name = boxId;
+    inp.value = val;
+    if (val === def) inp.checked = true;
+    inp.addEventListener('change', () => render());
+    l.append(inp, el('span', '', label));
     if (tail) box.insertBefore(l, tail);
     else box.append(l);
   });
 }
 
-group('algo', 'radio',
-  [['MD5','MD5'], ['SHA-1','SHA-1'], ['SHA-256','SHA-256'], ['SHA-384','SHA-384'], ['SHA-512','SHA-512']],
-  'SHA-256');
-group('len', 'radio',
-  [['0','полный'], ['8','8'], ['16','16'], ['32','32'], ['custom','своя']],
-  '0');
-group('sep', 'radio',
-  [['none','без'], ['-','-'], [':',':'], [',',','], [' ','пробел'], ['_','_'], ['custom','свой']],
-  '-');
-group('opt', 'checkbox',
-  [['pos','Номер позиции'], ['rev','Обратный порядок'], ['dbl','Двойной хэш'],
-   ['upper','Заглавные'], ['skip','Пропускать пробелы'], ['mask','Скрыть ввод'],
-   ['hashResult','Хешировать итог']],
-  null);
-group('unit', 'radio',
-  [['char','по символам'], ['word','по словам'], ['phrase','фраза целиком']],
-  'char');
-group('saltpos', 'radio',
-  [['front','спереди'], ['back','сзади']],
-  'front');
+makeChips('algo', 'radio', [
+  ['MD5','MD5'], ['SHA-1','SHA-1'], ['SHA-256','SHA-256'], ['SHA-384','SHA-384'], ['SHA-512','SHA-512']
+], hasCrypto ? 'SHA-256' : 'MD5');
 
-/* ——— Theme ——— */
-const themeBtn = $('themeBtn');
-function applyTheme(t) {
-  document.documentElement.setAttribute('data-theme', t);
-  localStorage.setItem('charhash-theme', t);
-  themeBtn.textContent = t === 'dark' ? 'Светлая' : 'Тёмная';
-}
-themeBtn.onclick = () => {
-  const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-  applyTheme(next);
+makeChips('fmt', 'radio', [
+  ['hex','HEX'], ['b64','Base64'], ['b64url','Base64URL']
+], 'hex');
+
+makeChips('len', 'radio', [
+  ['0','РїРѕР»РЅС‹Р№'], ['8','8'], ['16','16'], ['32','32'], ['custom','СЃРІРѕСЏ']
+], '0');
+
+makeChips('sep', 'radio', [
+  ['none','Р±РµР·'], ['-','-'], [':',':'], [',',','], [' ','РїСЂРѕР±РµР»'], ['_','_'], ['custom','СЃРІРѕР№']
+], '-');
+
+makeChips('unit', 'radio', [
+  ['char','РЎРёРјРІРѕР»'], ['word','РЎР»РѕРІРѕ'], ['phrase','Р¤СЂР°Р·Р° С†РµР»РёРєРѕРј']
+], 'char');
+
+makeChips('saltpos', 'radio', [
+  ['front','РЎРїРµСЂРµРґРё'], ['back','РЎР·Р°РґРё']
+], 'front');
+
+makeChips('opt', 'checkbox', [
+  ['hmac','Р РµР¶РёРј HMAC (РїРѕ СЃРѕР»Рё)'],
+  ['pos','РРЅРґРµРєСЃ РїРѕР·РёС†РёРё'],
+  ['rev','РћР±СЂР°С‚РЅС‹Р№ РїРѕСЂСЏРґРѕРє'],
+  ['dbl','Р”РІРѕР№РЅРѕР№ С…СЌС€'],
+  ['upper','Р’Р•Р РҐРќРР™ Р Р•Р“РРЎРўР '],
+  ['skip','РџСЂРѕРїСѓСЃРє РїСЂРѕР±РµР»РѕРІ'],
+  ['mask','РЎРєСЂС‹С‚СЊ РІРІРѕРґ'],
+  ['hist','Р—Р°РїРѕРјРёРЅР°С‚СЊ РІРІРѕРґ (Р»РѕРєР°Р»СЊРЅРѕ)'],
+  ['hashResult','РҐСЌС€РёСЂРѕРІР°С‚СЊ РёС‚РѕРі']
+], null);
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
+  del(k) { try { localStorage.removeItem(k); } catch {} }
 };
-const savedTheme = localStorage.getItem('charhash-theme') ||
-  (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-applyTheme(savedTheme);
+const MAX_ELEMS = 5000;
 
-/* ——— History ——— */
-const HIST_KEY = 'charhash-history';
-function loadHistory() {
-  try { return JSON.parse(localStorage.getItem(HIST_KEY) || '[]'); }
-  catch { return []; }
+function toUrlB64(str) {
+  let bin = '';
+  enc.encode(str).forEach(c => { bin += String.fromCharCode(c); });
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 }
-function saveHistory(text) {
-  if (!text.trim()) return;
-  let h = loadHistory().filter(x => x !== text);
-  h.unshift(text);
-  h = h.slice(0, 8);
-  localStorage.setItem(HIST_KEY, JSON.stringify(h));
+function fromUrlB64(s) {
+  s = s.replace(/-/g, '+').replace(/_/g, '/');
+  s += '='.repeat((4 - s.length % 4) % 4);
+  const bin = atob(s);
+  return new TextDecoder().decode(Uint8Array.from(bin, c => c.charCodeAt(0)));
+}
+
+const HIST_KEY = 'hashforge_history';
+function getHistory() {
+  try {
+    const v = JSON.parse(store.get(HIST_KEY) || '[]');
+    return Array.isArray(v) ? v.filter(x => typeof x === 'string') : [];
+  } catch { return []; }
+}
+function pushHistory(val) {
+  if (!val.trim() || val.length > 500) return;
+  let items = getHistory().filter(x => x !== val);
+  items.unshift(val);
+  store.set(HIST_KEY, JSON.stringify(items.slice(0, 10)));
   renderHistory();
 }
+function deleteHistoryItem(val) {
+  store.set(HIST_KEY, JSON.stringify(getHistory().filter(x => x !== val)));
+  renderHistory();
+}
+function clearAllHistory() {
+  store.del(HIST_KEY);
+  renderHistory();
+}
+
 function renderHistory() {
-  const list = loadHistory();
   const panel = $('histPanel');
   const box = $('history');
   box.replaceChildren();
-  if (!list.length) { panel.style.display = 'none'; return; }
+  const list = getHistory();
+  if (!list.length || getFlag('mask')) {
+    panel.style.display = 'none';
+    return;
+  }
   panel.style.display = '';
   list.forEach(txt => {
-    const b = el('button', 'hist-item', txt);
-    b.type = 'button';
-    b.title = txt;
-    b.onclick = () => { $('t').value = txt; render(); };
-    box.append(b);
+    const wrap = el('div', 'hist-chip');
+    const bText = el('button', 'hist-text', txt);
+    bText.title = txt;
+    bText.onclick = () => { $('t').value = txt; render(); };
+    const bDel = el('button', 'hist-del', 'Г—');
+    bDel.title = 'РЈРґР°Р»РёС‚СЊ РёР· РёСЃС‚РѕСЂРёРё';
+    bDel.onclick = () => deleteHistoryItem(txt);
+    wrap.append(bText, bDel);
+    box.append(wrap);
   });
 }
-renderHistory();
+$('clearHistBtn').onclick = clearAllHistory;
 
-/* ——— Core render ——— */
-let seq = 0, prev = 0, copyText = '', tm;
-
-function say(m) {
-  $('st').textContent = m;
-  clearTimeout(tm);
-  tm = setTimeout(() => { $('st').textContent = ''; }, 2200);
+// РђРґР°РїС‚РёСЂРѕРІР°РЅРЅРѕРµ СЃРѕС…СЂР°РЅРµРЅРёРµ СЃСЃС‹Р»РєРё С‡РµСЂРµР· РѕРєРЅРѕ РѕР±РѕР»РѕС‡РєРё
+function shareRecipe() {
+  const cfg = {
+    a: getRadio('algo'),
+    u: getRadio('unit'),
+    f: getRadio('fmt'),
+    s: getRadio('sep'),
+    l: getRadio('len'),
+    sp: getRadio('saltpos'),
+    hm: getFlag('hmac'),
+    ps: getFlag('pos'),
+    rv: getFlag('rev'),
+    db: getFlag('dbl'),
+    up: getFlag('upper'),
+    sk: getFlag('skip'),
+    hr: getFlag('hashResult'),
+    cs: $('cs').value,
+    cl: $('customLen').value,
+    pf: $('prefix').value,
+    sf: $('suffix').value,
+    o: $('off').value
+  };
+  const str = toUrlB64(JSON.stringify(cfg));
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.history.replaceState(null, '', '#' + str);
+      copyToClipboard(window.parent.location.href, 'РЎСЃС‹Р»РєР° РЅР° СЂРµС†РµРїС‚ СЃРєРѕРїРёСЂРѕРІР°РЅР°');
+      return;
+    }
+  } catch(e) {}
+  history.replaceState(null, '', '#' + str);
+  copyToClipboard(window.location.href, 'РЎСЃС‹Р»РєР° РЅР° СЂРµС†РµРїС‚ СЃРєРѕРїРёСЂРѕРІР°РЅР°');
 }
 
-async function copy(text, msg) {
-  try { await navigator.clipboard.writeText(text); }
-  catch {
-    const a = el('textarea');
-    a.value = text;
-    a.style.cssText = 'position:fixed;opacity:0';
-    document.body.append(a);
-    a.select();
-    try { document.execCommand('copy'); } catch (_) {}
-    a.remove();
+function loadFromUrl() {
+  try {
+    let hash = '';
+    try {
+      if (window.parent && window.parent !== window && window.parent.location.hash) {
+        hash = window.parent.location.hash.slice(1);
+      }
+    } catch(e) {}
+    if (!hash) hash = window.location.hash.slice(1);
+    if (!hash || hash === 'pane-hf' || hash === 'pane-sig') return;
+    const cfg = JSON.parse(fromUrlB64(hash));
+    const setR = (id, val) => {
+      for (const inp of document.querySelectorAll('#' + id + ' input[type=radio]')) {
+        if (inp.value === val) { inp.checked = true; break; }
+      }
+    };
+    if (cfg.a) setR('algo', cfg.a);
+    if (cfg.u) setR('unit', cfg.u);
+    if (cfg.f) setR('fmt', cfg.f);
+    if (cfg.s) setR('sep', cfg.s);
+    if (cfg.l) setR('len', cfg.l);
+    if (cfg.sp) setR('saltpos', cfg.sp);
+
+    const setF = (val, state) => {
+      const inp = document.querySelector('#opt input[value="' + val + '"]');
+      if (inp) inp.checked = !!state;
+    };
+    setF('hmac', cfg.hm);
+    setF('pos', cfg.ps);
+    setF('rev', cfg.rv);
+    setF('dbl', cfg.db);
+    setF('upper', cfg.up);
+    setF('skip', cfg.sk);
+    setF('hashResult', cfg.hr);
+
+    if (cfg.cs) $('cs').value = cfg.cs;
+    if (cfg.cl) $('customLen').value = cfg.cl;
+    if (cfg.pf) $('prefix').value = cfg.pf;
+    if (cfg.sf) $('suffix').value = cfg.sf;
+    if (cfg.o) $('off').value = cfg.o;
+  } catch (_) {}
+}
+
+let seq = 0;
+let lastResultText = '';
+let notifyTimer;
+
+function notify(msg) {
+  $('st').textContent = msg;
+  clearTimeout(notifyTimer);
+  notifyTimer = setTimeout(() => { $('st').textContent = ''; }, 2600);
+}
+window.notify = notify; // Р­РєСЃРїРѕСЂС‚ РґР»СЏ РІРЅРµС€РЅРµРіРѕ РѕРїРѕРІРµС‰РµРЅРёСЏ
+
+async function copyToClipboard(txt, msg = 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ') {
+  try {
+    await navigator.clipboard.writeText(txt);
+  } catch {
+    const ta = el('textarea');
+    ta.value = txt;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.append(ta);
+    ta.select();
+    document.execCommand('copy');
+    ta.remove();
   }
-  say(msg);
+  notify(msg);
+}
+
+function debounce(fn, ms = 100) {
+  let t;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), ms);
+  };
 }
 
 async function render() {
-  const my = ++seq;
-  const out = $('out'), chain = $('chain');
-  const algo = chk('algo');
-  let lenVal = chk('len');
-  if (lenVal === 'custom') {
-    lenVal = parseInt($('customLen').value, 10) || 0;
-  } else {
-    lenVal = +lenVal;
-  }
-  const up = flag('upper'), pos = flag('pos'), dbl = flag('dbl'),
-        rev = flag('rev'), hide = flag('mask'), hashRes = flag('hashResult');
+  const currentSeq = ++seq;
+  const out = $('out');
+  const chain = $('chain');
+  const algo = getRadio('algo');
+  const unit = getRadio('unit') || 'char';
+  const fmt = getRadio('fmt') || 'hex';
+  const saltPos = getRadio('saltpos') || 'front';
+
+  let lenSetting = getRadio('len');
+  let lenVal = Math.max(0, (lenSetting === 'custom') ? (parseInt($('customLen').value, 10) || 0) : +lenSetting);
+
+  const up = getFlag('upper');
+  const pos = getFlag('pos');
+  const dbl = getFlag('dbl');
+  const rev = getFlag('rev');
+  const hide = getFlag('mask');
+  const isHmac = getFlag('hmac');
+  const hashRes = getFlag('hashResult');
+
+  const rawInput = $('t').value;
   const salt = $('s').value;
   const off = Math.max(0, (parseInt($('off').value, 10) || 1) - 1);
   const prefix = $('prefix').value;
   const suffix = $('suffix').value;
-  const unit = chk('unit') || 'char';
-  const saltFront = (chk('saltpos') || 'front') === 'front';
-
-  $('chainTitle').textContent = unit === 'word' ? 'Хэш каждого слова'
-    : unit === 'phrase' ? 'Хэш фразы целиком'
-    : 'Хэш каждого символа';
 
   $('t').classList.toggle('hide', hide);
   $('s').classList.toggle('hide', hide);
+  $('s').type = hide ? 'password' : 'text';
+  renderHistory();
+  $('tMeta').textContent = `${splitChars(rawInput).length} СЃРёРјРІ.`;
 
-  let sv = chk('sep');
-  sv = sv === 'none' ? '' : sv === 'custom' ? $('cs').value : sv;
-
-  const unitLabel = unit === 'word' ? 'слово' : unit === 'phrase' ? 'фразу целиком' : 'символ';
-  const saltDesc = salt ? (saltFront ? 'соль + ' : '') : '';
-  const saltTail = salt && !saltFront ? ' + соль' : '';
-
-  $('rc').textContent =
-    algo + '(' + saltDesc + (pos ? 'номер + ' : '') + unitLabel + saltTail + ')' +
-    (dbl ? ', затем ' + algo + ' от результата' : '') +
-    '. Берутся символы хэша с ' + (off + 1) +
-    (lenVal ? ' по ' + (off + lenVal) : ' и до конца') +
-    '. Порядок ' + (rev ? 'обратный' : 'прямой') +
-    ', разделитель ' + (sv ? '«' + sv + '»' : 'без') +
-    (up ? ', заглавные' : '') +
-    (hashRes ? '. Затем хешируется вся готовая строка' : '') +
-    (prefix || suffix ? '. Prefix/Suffix применены' : '') + '.';
+  let sv = getRadio('sep');
+  sv = (sv === 'none') ? '' : (sv === 'custom') ? $('cs').value : sv;
 
   const skipChk = document.querySelector('#opt input[value="skip"]');
   if (skipChk) {
-    const skipLabel = skipChk.closest('.chip');
-    const skipDisabled = unit !== 'char';
-    skipChk.disabled = skipDisabled;
-    if (skipLabel) skipLabel.style.opacity = skipDisabled ? '.45' : '';
+    const disabled = unit !== 'char';
+    skipChk.disabled = disabled;
+    skipChk.closest('.chip').style.opacity = disabled ? '.35' : '';
   }
 
-  let parts = split($('t').value, unit);
-  if (unit === 'char' && flag('skip')) parts = parts.filter(p => p.trim());
-  if (rev) parts = [...parts].reverse();
+  const unitName = (unit === 'word') ? 'СЃР»РѕРІРѕ' : (unit === 'phrase') ? 'РІСЃСЋ С„СЂР°Р·Сѓ' : 'СЃРёРјРІРѕР»';
+  let recipeDesc = '';
+  if (isHmac) {
+    recipeDesc = `HMAC-${algo}(РєР»СЋС‡: ${salt ? 'В«СЃРѕР»СЊВ»' : 'РїСѓСЃС‚РѕР№'}, РґР°РЅРЅС‹Рµ: ${(pos ? 'в„– + ' : '') + unitName})`;
+  } else {
+    const sPrefix = (salt && saltPos === 'front') ? 'СЃРѕР»СЊ + ' : '';
+    const sSuffix = (salt && saltPos === 'back') ? ' + СЃРѕР»СЊ' : '';
+    recipeDesc = `${algo}(${sPrefix}${pos ? 'в„– + ' : ''}${unitName}${sSuffix})`;
+  }
+  if (dbl) recipeDesc += ` вћ” РїРѕРІС‚РѕСЂРЅС‹Р№ ${algo}`;
+  recipeDesc += ` | СЃСЂРµР·: [СЃ ${off + 1}${lenVal ? ' РґР». ' + lenVal : ' РґРѕ РєРѕРЅС†Р°'}]`;
+  recipeDesc += ` | РєРѕРґРёСЂРѕРІРєР°: ${fmt.toUpperCase()}`;
+  recipeDesc += ` | РїРѕСЂСЏРґРѕРє: ${rev ? 'СЂРµРІРµСЂСЃ' : 'РїСЂСЏРјРѕР№'}, СЂР°Р·РґРµР»РёС‚РµР»СЊ: ${sv ? 'В«' + sv + 'В»' : 'Р±РµР·'}`;
+  if (hashRes) recipeDesc += ` | вћ” РїРѕСЃС‚-С…СЌС€РёСЂРѕРІР°РЅРёРµ РІСЃРµР№ СЃС‚СЂРѕРєРё`;
+  $('recipe').textContent = recipeDesc;
 
-  $('n').textContent = parts.length;
+  let parts = splitText(rawInput, unit);
+  if (unit === 'char' && getFlag('skip')) parts = parts.filter(c => c.trim());
+  if (rev) parts = [...parts].reverse();
+  const totalParts = parts.length;
+  if (totalParts > MAX_ELEMS) parts = parts.slice(0, MAX_ELEMS);
+
+  $('n').textContent = totalParts > parts.length ? `${parts.length} РёР· ${totalParts}` : parts.length;
+  $('chainTitle').textContent = `РњР°С‚СЂРёС†Р° С…СЌС€РµР№ (${unit === 'word' ? 'РїРѕ СЃР»РѕРІР°Рј' : unit === 'phrase' ? 'РїРѕ С„СЂР°Р·Р°Рј' : 'РїРѕ СЃРёРјРІРѕР»Р°Рј'})`;
 
   if (!parts.length) {
-    out.replaceChildren(el('span', 'ph', 'Введите слово или фразу'));
+    out.replaceChildren(el('span', 'ph', 'Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ РґР»СЏ СЂР°СЃС‡С‘С‚Р° С…СЌС€-РїРѕС‚РѕРєР°...'));
     chain.replaceChildren();
-    $('l').textContent = 0;
-    $('copy').disabled = true;
-    copyText = '';
-    prev = 0;
+    $('l').textContent = '0';
+    $('copyBtn').disabled = true;
+    lastResultText = '';
     return;
   }
 
   let rows;
   try {
-    rows = await Promise.all(parts.map(async (g, i) => {
-      const numTag = pos ? (i + 1) + ':' : '';
-      const src = saltFront ? (salt + numTag + g) : (numTag + g + salt);
-      let full = await H(algo, src);
-      if (dbl) full = await H(algo, full);
-      let h = lenVal ? full.substr(off, lenVal) : full.slice(off);
-      if (up) h = h.toUpperCase();
-      return { g, full, h };
+    rows = await Promise.all(parts.map(async (elem, i) => {
+      const idxTag = pos ? `${i + 1}:` : '';
+      let textToHash;
+      if (isHmac) {
+        textToHash = idxTag + elem;
+      } else {
+        textToHash = (saltPos === 'front') ? (salt + idxTag + elem) : (idxTag + elem + salt);
+      }
+
+      let digestBytes = await computeDigest(algo, textToHash, salt, isHmac);
+      if (dbl) {
+        digestBytes = await computeDigest(algo, bytesToHex(digestBytes), '', false);
+      }
+
+      let formatted = formatDigest(digestBytes, fmt);
+      let sliced = lenVal ? formatted.slice(off, off + lenVal) : formatted.slice(off);
+      if (up) sliced = sliced.toUpperCase();
+
+      return {
+        elem,
+        fullHex: bytesToHex(digestBytes),
+        finalStr: sliced
+      };
     }));
-  } catch (e) {
-    if (my === seq) out.textContent = 'Ошибка: ' + e.message;
+  } catch (err) {
+    if (currentSeq === seq) out.textContent = 'РћС€РёР±РєР°: ' + err.message;
     return;
   }
-  if (my !== seq) return;
 
-  let result = rows.map(r => r.h).join(sv);
+  if (currentSeq !== seq) return;
+
+  let finalJoined = rows.map(r => r.finalStr).join(sv);
   if (hashRes) {
-    result = await H(algo, result);
-    if (up) result = result.toUpperCase();
+    const postBytes = await computeDigest(algo, finalJoined, '', false);
+    if (currentSeq !== seq) return;
+    finalJoined = formatDigest(postBytes, fmt);
+    if (up) finalJoined = finalJoined.toUpperCase();
   }
-  result = prefix + result + suffix;
+  finalJoined = prefix + finalJoined + suffix;
 
-  copyText = result;
-  $('l').textContent = result.length;
-  $('copy').disabled = false;
+  lastResultText = finalJoined;
+  $('l').textContent = finalJoined.length;
+  $('copyBtn').disabled = false;
 
-  out.replaceChildren();
-  chain.replaceChildren();
-
+  const frag = document.createDocumentFragment();
   if (hashRes) {
-    out.append(el('span', 'a', result));
+    frag.append(el('span', 'a', finalJoined));
   } else {
+    if (prefix) frag.append(el('span', 'sp', prefix));
     rows.forEach((r, i) => {
-      if (i && sv) out.append(el('span', 'sp', sv));
-      out.append(el('span', i % 2 ? 'b' : 'a', r.h));
+      if (i && sv) frag.append(el('span', 'sp', sv));
+      frag.append(el('span', i % 2 ? 'b' : 'a', r.finalStr));
     });
-    if (prefix) out.prepend(el('span', 'sp', prefix));
-    if (suffix) out.append(el('span', 'sp', suffix));
+    if (suffix) frag.append(el('span', 'sp', suffix));
   }
+  out.replaceChildren(frag);
 
-  rows.forEach((r, i) => {
-    const shown = hide ? '•' : (SHOW[r.g] || r.g);
-    const tile = el('button', 'tile' + (i >= prev ? ' new' : ''));
+  chain.replaceChildren();
+  const TILE_LIMIT = 120;
+  const tilesToRender = rows.slice(0, TILE_LIMIT);
+
+  tilesToRender.forEach((r, i) => {
+    const tile = el('button', 'tile');
     tile.type = 'button';
-    tile.setAttribute('aria-label', 'Скопировать хэш символа ' + shown);
 
-    const fp = el('span', 'fp');
-    for (let j = 0; j < 8; j++) {
-      const b = parseInt(r.full.substr(j * 2, 2) || '00', 16);
-      const s = el('i');
-      s.style.background = 'hsl(' + Math.round(b / 255 * 360) + ' 78% 56%)';
-      s.style.animationDelay = (Math.min(i, 12) * 35 + j * 25) + 'ms';
-      fp.append(s);
-    }
+    const dispChar = hide ? 'вЂў' : (SHOW_CHAR[r.elem] || r.elem);
+    tile.title = `РЎРєРѕРїРёСЂРѕРІР°С‚СЊ С…СЌС€ РґР»СЏ: ${dispChar}`;
 
-    let cps;
-    if (hide) {
-      cps = 'скрыто';
+    const top = el('div', 'tile-top');
+    const glyph = el('span', 'tile-g', dispChar);
+    
+    let metaTxt = '';
+    if (unit === 'char') {
+      metaTxt = hide ? 'U+вЂўвЂўвЂўвЂў' : 'U+' + Array.from(r.elem).map(c => c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0')).join(' ');
     } else {
-      const cps_arr = Array.from(r.g);
-      const cps_list = cps_arr.slice(0, 6)
-        .map(c => c.codePointAt(0).toString(16).toUpperCase().padStart(4, '0'));
-      cps = 'U+' + cps_list.join(' ') + (cps_arr.length > 6 ? ' …' : '');
+      metaTxt = `${r.elem.length} СЃРёРјРІ.`;
+    }
+    const metaSpan = el('span', 'tile-u', metaTxt);
+    top.append(glyph, metaSpan);
+
+    const fp = el('div', 'fp');
+    for (let j = 0; j < 8; j++) {
+      const byteHex = r.fullHex.slice(j * 2, j * 2 + 2) || '00';
+      const bVal = parseInt(byteHex, 16);
+      const stripe = el('i');
+      stripe.style.background = `hsl(${Math.round(bVal / 255 * 360)} 75% 50%)`;
+      fp.append(stripe);
     }
 
-    tile.append(
-      el('span', 'g', shown),
-      el('span', 'u', cps),
-      fp,
-      el('span', 'h', r.h)
-    );
-    tile.onclick = () => copy(r.h, 'Хэш «' + shown + '» скопирован');
+    const hashSpan = el('span', 'tile-h', r.finalStr || '(РїСѓСЃС‚Рѕ)');
+
+    tile.append(top, fp, hashSpan);
+    tile.onclick = () => copyToClipboard(r.finalStr, `РҐСЌС€ СЌР»РµРјРµРЅС‚Р° В«${dispChar}В» СЃРєРѕРїРёСЂРѕРІР°РЅ`);
     chain.append(tile);
   });
 
-  prev = rows.length;
-  saveHistory($('t').value);
+  const notes = [];
+  if (totalParts > rows.length) notes.push(`РћР±СЂР°Р±РѕС‚Р°РЅС‹ РїРµСЂРІС‹Рµ ${rows.length} РёР· ${totalParts} СЌР»РµРјРµРЅС‚РѕРІ.`);
+  if (rows.length > TILE_LIMIT) notes.push(`РџРѕРєР°Р·Р°РЅС‹ РїРµСЂРІС‹Рµ ${TILE_LIMIT} РёР· ${rows.length} РїР»РёС‚РѕРє.`);
+  if (notes.length) chain.append(el('div', 'limit-warning', notes.join(' ')));
 }
 
-/* ——— Events ——— */
-$('copy').onclick = () => copy(copyText, 'Строка скопирована');
+const debouncedRender = debounce(render, 90);
+
+$('copyBtn').onclick = () => copyToClipboard(lastResultText, 'Р“РѕС‚РѕРІР°СЏ СЃС‚СЂРѕРєР° СЃРєРѕРїРёСЂРѕРІР°РЅР°');
+$('shareBtn').onclick = shareRecipe;
+
 $('clearBtn').onclick = () => {
   $('t').value = '';
   $('s').value = '';
@@ -696,26 +1373,904 @@ $('clearBtn').onclick = () => {
   $('suffix').value = '';
   render();
 };
+
 $('exportBtn').onclick = () => {
-  if (!copyText) return;
-  const blob = new Blob([copyText], { type: 'text/plain;charset=utf-8' });
+  if (!lastResultText) return;
+  const blob = new Blob([lastResultText], { type: 'text/plain;charset=utf-8' });
   const a = el('a');
   a.href = URL.createObjectURL(blob);
-  a.download = 'char-hash.txt';
+  a.download = `hash-forge-${Date.now()}.txt`;
+  document.body.append(a);
   a.click();
-  URL.revokeObjectURL(a.href);
-  say('Файл скачан');
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  notify('Р¤Р°Р№Р» СЌРєСЃРїРѕСЂС‚РёСЂРѕРІР°РЅ');
 };
 
 ['t', 's', 'off', 'prefix', 'suffix', 'cs', 'customLen'].forEach(id => {
   $(id).addEventListener('input', () => {
-    if (id === 'cs') document.querySelector('#sep input[value=custom]').checked = true;
-    if (id === 'customLen') document.querySelector('#len input[value=custom]').checked = true;
-    render();
+    if (id === 'cs') {
+      const radio = document.querySelector('#sep input[value=custom]');
+      if (radio) radio.checked = true;
+    }
+    if (id === 'customLen') {
+      const radio = document.querySelector('#len input[value=custom]');
+      if (radio) radio.checked = true;
+    }
+    debouncedRender();
   });
 });
 
+$('t').addEventListener('change', () => {
+  if (getFlag('hist') && !getFlag('mask')) pushHistory($('t').value);
+});
+
+loadFromUrl();
 render();
 </script>
 </body>
 </html>
+</template>
+
+<!-- =========================================================================
+     РЁРђР‘Р›РћРќ 2: SIGNAL 2.5 REVERSIBLE MATRIX
+     ========================================================================= -->
+<template id="tpl-signal">
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SIGNAL 2.5</title>
+<style>
+  :root {
+    --bg: #F8FAFC;
+    --bg-sub: #F1F5F9;
+    --panel: #FFFFFF;
+    --panel-header: #F8FAFC;
+    --border: #CBD5E1;
+    --border-focus: #0284C7;
+    --text: #0F172A;
+    --text-dim: #475569;
+    --text-dimmer: #94A3B8;
+    --primary: #0284C7;
+    --primary-light: #E0F2FE;
+    --accent: #E11D48;
+    --success: #059669;
+    --success-bg: #ECFDF5;
+    --warning: #D97706;
+    --warning-bg: #FFFBEB;
+    --warning-border: #FDE68A;
+    --danger: #DC2626;
+    --danger-bg: #FEF2F2;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+  }
+
+  [data-theme="dark"] {
+    --bg: #090D12;
+    --bg-sub: #0F1620;
+    --panel: #131B26;
+    --panel-header: #0E151F;
+    --border: #223042;
+    --border-focus: #38BDF8;
+    --text: #F8FAFC;
+    --text-dim: #94A3B8;
+    --text-dimmer: #475569;
+    --primary: #38BDF8;
+    --primary-light: #082F49;
+    --accent: #F43F5E;
+    --success: #10B981;
+    --success-bg: #064E3B;
+    --warning: #FBBF24;
+    --warning-bg: #451A03;
+    --warning-border: #78350F;
+    --danger: #EF4444;
+    --danger-bg: #450A0A;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-y: hidden !important;
+    min-height: auto !important;
+  }
+
+  body {
+    font-family: 'JetBrains Mono', 'SF Mono', 'Segoe UI Mono', Menlo, Consolas, monospace;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--border);
+    padding: 14px clamp(16px, 4vw, 40px);
+  }
+
+  .header-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .brand-group { display: flex; align-items: center; gap: 12px; }
+  .brand-badge {
+    background: var(--primary);
+    color: #fff;
+    padding: 3px 8px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 4px;
+  }
+
+  .brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-desc {
+    font-size: 0.76rem;
+    color: var(--text-dim);
+    border-left: 2px solid var(--border);
+    padding-left: 10px;
+  }
+
+  .btn {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-family: inherit;
+    font-size: 0.74rem;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.15s ease;
+    font-weight: 500;
+  }
+
+  .btn:hover { border-color: var(--primary); color: var(--primary); }
+  .btn-accent { background: var(--primary); color: #fff; border-color: var(--primary); }
+  .btn-accent:hover { color: #fff; opacity: 0.9; }
+
+  main {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px clamp(16px, 4vw, 40px) 36px clamp(16px, 4vw, 40px);
+    flex: 1;
+  }
+
+  .input-card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .input-card:focus-within { border-color: var(--border-focus); }
+
+  .input-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--panel-header);
+    padding: 8px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .presets-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .preset-tag {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    cursor: pointer;
+    color: var(--text-dim);
+  }
+  .preset-tag:hover { border-color: var(--primary); color: var(--primary); }
+
+  textarea#src {
+    width: 100%;
+    min-height: 84px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 1.05rem;
+    line-height: 1.5;
+    padding: 14px 16px;
+    resize: vertical;
+  }
+  textarea#src::placeholder { color: var(--text-dimmer); }
+
+  .input-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 16px;
+    background: var(--panel-header);
+    border-top: 1px dashed var(--border);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .live-status { display: inline-flex; align-items: center; gap: 6px; }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 6px var(--success);
+  }
+  .status-dot.idle { background: var(--text-dimmer); box-shadow: none; }
+
+  .filter-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tabs-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 0.74rem;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .tab-btn:hover { background: var(--bg-sub); color: var(--text); }
+  .tab-btn.active {
+    background: var(--panel);
+    border-color: var(--border);
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+    gap: 14px;
+  }
+
+  .cell {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+
+  .cell.wide { grid-column: span 2; }
+  .cell.warn-cyrillic {
+    border-color: var(--warning-border);
+    background: var(--warning-bg);
+  }
+
+  .cell-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--panel-header);
+    border-bottom: 1px solid var(--border);
+    gap: 8px;
+  }
+
+  .cell.warn-cyrillic .cell-head { background: rgba(217, 119, 6, 0.05); }
+
+  .cell-title-block {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .cell-num { font-size: 0.7rem; font-weight: 700; color: var(--primary); }
+  .cell-title { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.03em; }
+
+  .badge {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 3px;
+    background: var(--bg-sub);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .badge-warn {
+    background: var(--warning-bg);
+    color: var(--warning);
+    border-color: var(--warning-border);
+  }
+
+  .badge-irreversible {
+    background: var(--danger-bg);
+    color: var(--danger);
+    border-color: var(--danger);
+  }
+
+  .cell-actions { display: flex; gap: 6px; }
+  .action-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 3px;
+    padding: 3px 8px;
+    font-size: 0.68rem;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.12s ease;
+  }
+  .action-btn:hover { border-color: var(--primary); color: var(--primary); }
+  .action-btn.active-play { background: var(--warning); border-color: var(--warning); color: #fff; }
+  .action-btn.copied { background: var(--success); border-color: var(--success); color: #fff; }
+  
+  .action-btn.send-btn {
+    border-color: var(--border);
+    color: var(--primary);
+  }
+  .action-btn.send-btn:hover {
+    background: var(--primary);
+    color: #fff;
+  }
+
+  .cell-body {
+    flex: 1;
+    padding: 12px 14px;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+    user-select: all;
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .cell-body.empty { color: var(--text-dimmer); user-select: none; }
+
+  .cell-foot {
+    padding: 6px 14px;
+    border-top: 1px solid var(--border);
+    font-size: 0.68rem;
+    color: var(--text-dimmer);
+    display: flex;
+    justify-content: space-between;
+    background: var(--panel);
+  }
+
+  @media (max-width: 768px) {
+    .cell.wide { grid-column: span 1; }
+    .grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-container">
+    <div class="brand-group">
+      <span class="brand-badge">SIGNAL 2.5</span>
+      <span class="brand-name">STANDARDS ENCODER ARRAY</span>
+      <span class="brand-desc">RFC / ITU / ISO РјР°С‚СЂРёС†Р°</span>
+    </div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn" id="btnSendInputToHf" title="РџРµСЂРµРґР°С‚СЊ РІС…РѕРґРЅРѕР№ С‚РµРєСЃС‚ РІ РјРѕРґСѓР»СЊ С…СЌС€РёСЂРѕРІР°РЅРёСЏ">вћ” Р’ HashForge</button>
+      <button class="btn btn-accent" id="btnExport">рџ“‹ Р­РєСЃРїРѕСЂС‚ РІСЃРµС…</button>
+      <button class="btn" id="btnClear">вњ• РћС‡РёСЃС‚РёС‚СЊ</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="input-card">
+    <div class="input-head">
+      <span>Р’РҐРћР”РќРћР™ РЎРР“РќРђР› (UNICODE UTF-8)</span>
+      <div class="presets-row">
+        <span>РџСЂРµСЃРµС‚С‹:</span>
+        <span class="preset-tag" data-val="SIGNAL 2025">SIGNAL 2025</span>
+        <span class="preset-tag" data-val="РЎР’РЇР—Р¬ 73">РЎР’РЇР—Р¬ 73 (RU)</span>
+        <span class="preset-tag" data-val="Mayday 7700">Mayday 7700</span>
+        <span class="preset-tag" data-val="Standard RFC 4648">RFC 4648</span>
+      </div>
+    </div>
+    <textarea id="src" autofocus placeholder="Р’РІРµРґРёС‚Рµ С‚РµРєСЃС‚ РЅР° Р»СЋР±РѕРј СЏР·С‹РєРµвЂ¦">SIGNAL 2025: РЎРІСЏР·СЊ СѓСЃС‚Р°РЅРѕРІР»РµРЅР°</textarea>
+    <div class="input-info">
+      <div class="live-status">
+        <span class="status-dot" id="liveDot"></span>
+        <span id="charCount">0</span> СЃРёРјРІ. В· <span id="byteCount">0</span> Р±Р°Р№С‚ UTF-8 В· Р­РЅС‚СЂРѕРїРёСЏ: <span id="entropyVal">0.00</span> Р±РёС‚/СЃРёРјРІ.
+      </div>
+      <div>15 РѕР±СЂР°С‚РёРјС‹С… СЃС‚Р°РЅРґР°СЂС‚РѕРІ + 1 РєРѕРЅС‚СЂРѕР»СЊРЅС‹Р№ С…РµС€</div>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <div class="tabs-group" id="tabs">
+      <button class="tab-btn active" data-cat="all">Р’СЃРµ СЃС‚Р°РЅРґР°СЂС‚С‹ (16)</button>
+      <button class="tab-btn" data-cat="rfc">RFC & РРЅС‚РµСЂРЅРµС‚</button>
+      <button class="tab-btn" data-cat="radio">Р Р°РґРёРѕ & РЎРІСЏР·СЊ</button>
+      <button class="tab-btn" data-cat="cipher">РЎРёРјРјРµС‚СЂРёС‡РЅС‹Рµ С€РёС„СЂС‹</button>
+      <button class="tab-btn" data-cat="telecom">РўРµР»РµРєРѕРјРјСѓРЅРёРєР°С†РёРё</button>
+    </div>
+  </div>
+
+  <div class="grid" id="matrixGrid"></div>
+</main>
+
+<script>
+(function(){
+  "use strict";
+
+  const MORSE_ITU = {
+    'a':'.-','b':'-...','c':'-.-.','d':'-..','e':'.','f':'..-.','g':'--.','h':'....','i':'..','j':'.---',
+    'k':'-.-','l':'.-..','m':'--','n':'-.','o':'---','p':'.--.','q':'--.-','r':'.-.','s':'...','t':'-',
+    'u':'..-','v':'...-','w':'.--','x':'-..-','y':'-.--','z':'--..',
+    'Р°':'.-','Р±':'-...','РІ':'.--','Рі':'--.','Рґ':'-..','Рµ':'.','С‘':'.','Р¶':'...-','Р·':'--..','Рё':'..',
+    'Р№':'.---','Рє':'-.-','Р»':'.-..','Рј':'--','РЅ':'-.','Рѕ':'---','Рї':'.--.','СЂ':'.-.','СЃ':'...','С‚':'-',
+    'Сѓ':'..-','С„':'..-.','С…':'....','С†':'-.-.','С‡':'---.','С€':'----','С‰':'--.-','СЉ':'--.--','С‹':'-.--',
+    'СЊ':'-..-','СЌ':'...-...','СЋ':'..--','СЏ':'.-.-',
+    '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....',
+    '6':'-....','7':'--...','8':'---..','9':'----.',
+    '.':'.-.-.-',',':'--..--','?':'..--..','!':'-.-.--','-':'-....-','/':'-..-.'
+  };
+
+  const NATO_ICAO = {
+    'a':'Alpha','b':'Bravo','c':'Charlie','d':'Delta','e':'Echo','f':'Foxtrot','g':'Golf',
+    'h':'Hotel','i':'India','j':'Juliett','k':'Kilo','l':'Lima','m':'Mike','n':'November',
+    'o':'Oscar','p':'Papa','q':'Quebec','r':'Romeo','s':'Sierra','t':'Tango','u':'Uniform',
+    'v':'Victor','w':'Whiskey','x':'X-ray','y':'Yankee','z':'Zulu',
+    '0':'Zero','1':'One','2':'Two','3':'Three','4':'Four',
+    '5':'Five','6':'Six','7':'Seven','8':'Eight','9':'Nine'
+  };
+
+  const RU_RADIO = {
+    'Р°':'РђРЅРЅР°','Р±':'Р‘РѕСЂРёСЃ','РІ':'Р’Р°СЃРёР»РёР№','Рі':'Р“СЂРёРіРѕСЂРёР№','Рґ':'Р”РјРёС‚СЂРёР№','Рµ':'Р•Р»РµРЅР°','С‘':'Р•Р»РµРЅР°',
+    'Р¶':'Р–РµРЅСЏ','Р·':'Р—РёРЅР°РёРґР°','Рё':'РРІР°РЅ','Р№':'РРІР°РЅ-РєСЂР°С‚РєРёР№','Рє':'РљРѕРЅСЃС‚Р°РЅС‚РёРЅ','Р»':'Р›РµРѕРЅРёРґ',
+    'Рј':'РњРёС…Р°РёР»','РЅ':'РќРёРєРѕР»Р°Р№','Рѕ':'РћР»СЊРіР°','Рї':'РџР°РІРµР»','СЂ':'Р РѕРјР°РЅ','СЃ':'РЎРµРјС‘РЅ','С‚':'РўР°С‚СЊСЏРЅР°',
+    'Сѓ':'РЈР»СЊСЏРЅР°','С„':'Р¤С‘РґРѕСЂ','С…':'РҐР°СЂРёС‚РѕРЅ','С†':'Р¦Р°РїР»СЏ','С‡':'Р§РµР»РѕРІРµРє','С€':'РЁСѓСЂР°','С‰':'Р©СѓРєР°',
+    'СЉ':'РўРІС‘СЂРґС‹Р№-Р·РЅР°Рє','С‹':'Р•СЂС‹','СЊ':'РњСЏРіРєРёР№-Р·РЅР°Рє','СЌ':'Р­С…Рѕ','СЋ':'Р®СЂРёР№','СЏ':'РЇРєРѕРІ',
+    '0':'РќРѕР»СЊ','1':'РћРґРёРЅ','2':'Р”РІР°','3':'РўСЂРё','4':'Р§РµС‚С‹СЂРµ',
+    '5':'РџСЏС‚СЊ','6':'РЁРµСЃС‚СЊ','7':'РЎРµРјСЊ','8':'Р’РѕСЃРµРјСЊ','9':'Р”РµРІСЏС‚СЊ'
+  };
+
+  const BRAILLE_GRADE1 = {
+    'a':'в Ѓ','b':'в ѓ','c':'в ‰','d':'в ™','e':'в ‘','f':'в ‹','g':'в ›','h':'в “','i':'в Љ','j':'в љ',
+    'k':'в …','l':'в ‡','m':'в Ќ','n':'в ќ','o':'в •','p':'в Џ','q':'в џ','r':'в —','s':'в Ћ','t':'в ћ',
+    'u':'в Ґ','v':'в §','w':'в є','x':'в ­','y':'в Ѕ','z':'в µ',
+    'Р°':'в Ѓ','Р±':'в ѓ','РІ':'в є','Рі':'в ›','Рґ':'в ™','Рµ':'в ‘','С‘':'в Ў','Р¶':'в љ','Р·':'в µ','Рё':'в Љ',
+    'Р№':'в Ї','Рє':'в …','Р»':'в ‡','Рј':'в Ќ','РЅ':'в ќ','Рѕ':'в •','Рї':'в Џ','СЂ':'в —','СЃ':'в Ћ','С‚':'в ћ',
+    'Сѓ':'в Ґ','С„':'в ‹','С…':'в “','С†':'в ‰','С‡':'в џ','С€':'в ±','С‰':'в ­','СЉ':'в ·','С‹':'в ®','СЊ':'в ѕ',
+    'СЌ':'в Є','СЋ':'в і','СЏ':'в «',
+    '1':'в јв Ѓ','2':'в јв ѓ','3':'в јв ‰','4':'в јв ™','5':'в јв ‘','6':'в јв ‹','7':'в јв ›','8':'в јв “','9':'в јв Љ','0':'в јв љ',
+    ' ':' ','.':'в І',',':'в ‚','!':'в –','?':'в ¦','-':'в ¤'
+  };
+
+  const SEMAPHORE_MAP = {
+    'a':'N-NE','b':'N-E','c':'N-SE','d':'N-S','e':'N-SW','f':'N-W','g':'N-NW',
+    'h':'NE-E','i':'NE-SE','j':'E-S','k':'NE-N','l':'NE-SW','m':'NE-W','n':'NE-NW',
+    'o':'E-SE','p':'E-S','q':'E-SW','r':'E-W','s':'E-NW','t':'SE-S','u':'SE-SW',
+    'v':'SW-W','w':'SE-NW','x':'S-SW','y':'S-W','z':'S-NW'
+  };
+
+  function toBinary(str) {
+    return Array.from(new TextEncoder().encode(str))
+      .map(b => b.toString(2).padStart(8, '0')).join(' ');
+  }
+
+  function toHex(str) {
+    return Array.from(new TextEncoder().encode(str))
+      .map(b => b.toString(16).padStart(2, '0').toUpperCase()).join(' ');
+  }
+
+  function toBase64(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  function toBase32(str) {
+    const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    const bytes = new TextEncoder().encode(str);
+    let bits = 0, value = 0, output = '';
+    for (let i = 0; i < bytes.length; i++) {
+      value = (value << 8) | bytes[i];
+      bits += 8;
+      while (bits >= 5) {
+        output += alphabet[(value >>> (bits - 5)) & 31];
+        bits -= 5;
+      }
+    }
+    if (bits > 0) output += alphabet[(value << (5 - bits)) & 31];
+    while (output.length % 8 !== 0) output += '=';
+    return output;
+  }
+
+  function toPercentEncoding(str) {
+    return encodeURIComponent(str);
+  }
+
+  function toPunycode(str) {
+    const base = 36, tmin = 1, tmax = 26, skew = 38, damp = 700, initialBias = 72, initialN = 128;
+    function adapt(delta, numpoints, firsttime) {
+      delta = firsttime ? Math.floor(delta / damp) : delta >> 1;
+      delta += Math.floor(delta / numpoints);
+      let k = 0;
+      while (delta > ((base - tmin) * tmax) >> 1) {
+        delta = Math.floor(delta / (base - tmin));
+        k += base;
+      }
+      return k + Math.floor(((base - tmin + 1) * delta) / (delta + skew));
+    }
+    const input = Array.from(str);
+    let n = initialN, delta = 0, bias = initialBias, out = '';
+    const b = input.filter(c => c.charCodeAt(0) < 128);
+    out = b.join('');
+    let h = b.length, bLen = b.length;
+    if (bLen > 0) out += '-';
+    while (h < input.length) {
+      let m = 0x7fffffff;
+      input.forEach(c => {
+        const cp = c.codePointAt(0);
+        if (cp >= n && cp < m) m = cp;
+      });
+      delta += (m - n) * (h + 1);
+      n = m;
+      for (let i = 0; i < input.length; i++) {
+        const cp = input[i].codePointAt(0);
+        if (cp < n) delta++;
+        if (cp === n) {
+          let q = delta;
+          for (let k = base; ; k += base) {
+            const t = k <= bias ? tmin : (k >= bias + tmax ? tmax : k - bias);
+            if (q < t) break;
+            const digit = t + ((q - t) % (base - t));
+            out += String.fromCharCode(digit < 26 ? digit + 97 : digit + 22);
+            q = Math.floor((q - t) / (base - t));
+          }
+          out += String.fromCharCode(q < 26 ? q + 97 : q + 22);
+          bias = adapt(delta, h + 1, h === bLen);
+          delta = 0;
+          h++;
+        }
+      }
+      delta++;
+      n++;
+    }
+    return 'xn--' + out;
+  }
+
+  function rotInvolution(str) {
+    return str.replace(/[a-zA-Z]/g, c => {
+      const base = c <= 'Z' ? 65 : 97;
+      return String.fromCharCode(((c.charCodeAt(0) - base + 13) % 26) + base);
+    }).replace(/[Р°-СЏРђ-РЇС‘РЃ]/g, c => {
+      if (c === 'С‘') return 'С‡';
+      if (c === 'РЃ') return 'Р§';
+      const isUpper = c === c.toUpperCase();
+      const code = c.toLowerCase().charCodeAt(0);
+      if (code >= 1072 && code <= 1103) {
+        const shifted = ((code - 1072 + 16) % 32) + 1072;
+        const res = String.fromCharCode(shifted);
+        return isUpper ? res.toUpperCase() : res;
+      }
+      return c;
+    });
+  }
+
+  function atbash(str) {
+    return Array.from(str).map(c => {
+      const code = c.charCodeAt(0);
+      if (code >= 65 && code <= 90) return String.fromCharCode(90 - (code - 65));
+      if (code >= 97 && code <= 122) return String.fromCharCode(122 - (code - 97));
+      if (code >= 1040 && code <= 1071) return String.fromCharCode(1071 - (code - 1040));
+      if (code >= 1072 && code <= 1103) return String.fromCharCode(1103 - (code - 1072));
+      return c;
+    }).join('');
+  }
+
+  function toTapCode(str) {
+    const grid = [
+      ['A','B','C','D','E'],
+      ['F','G','H','I','J'],
+      ['L','M','N','O','P'],
+      ['Q','R','S','T','U'],
+      ['V','W','X','Y','Z']
+    ];
+    const words = str.toUpperCase().split(/\s+/);
+    const encodedWords = words.map(w => {
+      const letters = [];
+      for (let ch of w) {
+        if (ch === 'K') ch = 'C';
+        let found = false;
+        for (let r = 0; r < 5; r++) {
+          for (let c = 0; c < 5; c++) {
+            if (grid[r][c] === ch) {
+              letters.push('.'.repeat(r+1) + ' ' + '.'.repeat(c+1));
+              found = true;
+              break;
+            }
+          }
+          if (found) break;
+        }
+      }
+      return letters.join('  ');
+    }).filter(w => w.length > 0);
+    return encodedWords.join('  /  ');
+  }
+
+  function toBacon(str) {
+    return Array.from(str.toUpperCase()).map(c => {
+      const code = c.charCodeAt(0);
+      if (code >= 65 && code <= 90) {
+        const val = code - 65;
+        return val.toString(2).padStart(5, '0').replace(/0/g, 'A').replace(/1/g, 'B');
+      }
+      if (c === ' ') return '/';
+      return '';
+    }).filter(c => c !== '').join(' ');
+  }
+
+  function toMorse(str) {
+    return str.toLowerCase().split(/\s+/).map(word => {
+      return Array.from(word).map(c => MORSE_ITU[c] || '').filter(Boolean).join(' ');
+    }).filter(w => w.length > 0).join('  /  ');
+  }
+
+  function toNato(str) {
+    return Array.from(str.toLowerCase()).map(c => {
+      if (c === ' ') return '/';
+      return NATO_ICAO[c] || '';
+    }).filter(Boolean).join(' ');
+  }
+
+  function toRuRadio(str) {
+    return Array.from(str.toLowerCase()).map(c => {
+      if (c === ' ') return '/';
+      return RU_RADIO[c] || '';
+    }).filter(Boolean).join(' ');
+  }
+
+  function toBraille(str) {
+    return Array.from(str.toLowerCase()).map(c => BRAILLE_GRADE1[c] || c).join('');
+  }
+
+  function toSemaphore(str) {
+    return str.toLowerCase().split(/\s+/).map(w => {
+      return Array.from(w).map(c => SEMAPHORE_MAP[c] || '').filter(Boolean).join(' ');
+    }).filter(w => w.length > 0).join('  /  ');
+  }
+
+  const ZW_ZERO = '\u200B';
+  const ZW_ONE  = '\u200C';
+  const ZW_FLAG = '\u200D';
+  function toZeroWidth(str) {
+    const bytes = new TextEncoder().encode(str);
+    let bits = '';
+    bytes.forEach(b => bits += b.toString(2).padStart(8,'0'));
+    return ZW_FLAG + Array.from(bits).map(b => b === '0' ? ZW_ZERO : ZW_ONE).join('') + ZW_FLAG;
+  }
+  function previewZeroWidth(raw) {
+    if (!raw) return '';
+    return Array.from(raw).map(c => {
+      if (c === ZW_ZERO) return 'В·';
+      if (c === ZW_ONE) return 'в–Є';
+      if (c === ZW_FLAG) return 'в”‚';
+      return c;
+    }).join('');
+  }
+
+  async function computeSha256(str) {
+    if (!str) return '';
+    const buf = new TextEncoder().encode(str);
+    const digest = await crypto.subtle.digest('SHA-256', buf);
+    return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  function calcEntropy(str) {
+    if (!str) return '0.00';
+    const len = str.length;
+    const freq = {};
+    for (let ch of str) freq[ch] = (freq[ch] || 0) + 1;
+    let ent = 0;
+    for (let ch in freq) {
+      const p = freq[ch] / len;
+      ent -= p * Math.log2(p);
+    }
+    return ent.toFixed(2);
+  }
+
+  const MATRIX = [
+    { id: 'binary', title: 'BINARY (UTF-8)', cat: 'rfc', std: 'RFC 3629', fn: toBinary, latinOnly: false, irreversible: false, note: '8-Р±РёС‚ UTF-8' },
+    { id: 'hex', title: 'HEXADECIMAL', cat: 'rfc', std: 'RFC 4648 В§8', fn: toHex, latinOnly: false, irreversible: false, note: '16-СЂРёС‡РЅС‹Р№ РґР°РјРї' },
+    { id: 'base64', title: 'BASE64', cat: 'rfc', std: 'RFC 4648 В§4', fn: toBase64, latinOnly: false, irreversible: false, note: 'РЎС‚Р°РЅРґР°СЂС‚РЅС‹Р№ Base64' },
+    { id: 'base32', title: 'BASE32', cat: 'rfc', std: 'RFC 4648 В§6', fn: toBase32, latinOnly: false, irreversible: false, note: '32-Р·РЅР°С‡РЅС‹Р№ Р°Р»С„Р°РІРёС‚' },
+    { id: 'url', title: 'PERCENT-ENCODING', cat: 'rfc', std: 'RFC 3986', fn: toPercentEncoding, latinOnly: false, irreversible: false, note: 'URL РєРѕРґРёСЂРѕРІР°РЅРёРµ' },
+    { id: 'punycode', title: 'PUNYCODE / IDNA', cat: 'rfc', std: 'RFC 3492', fn: toPunycode, latinOnly: false, irreversible: false, note: 'РРЅС‚РµСЂРЅР°С†РёРѕРЅР°Р»РёР·Р°С†РёСЏ РґРѕРјРµРЅРѕРІ' },
+    { id: 'morse', title: 'MORSE CODE', cat: 'radio', std: 'ITU-R M.1677 / Р“РћРЎРў', fn: toMorse, wide: true, audio: true, latinOnly: false, irreversible: false, note: 'Р”РІСѓСЏР·С‹С‡РЅС‹Р№ ITU / Р“РћРЎРў' },
+    { id: 'nato', title: 'NATO / ICAO PHONETIC', cat: 'radio', std: 'ICAO Doc 9432', fn: toNato, wide: true, latinOnly: true, irreversible: false, note: 'РњРµР¶РґСѓРЅР°СЂРѕРґРЅС‹Р№ СЃС‚Р°РЅРґР°СЂС‚ СЂР°РґРёРѕСЃРІСЏР·Рё' },
+    { id: 'ruradio', title: 'РЎР’РЇР—РќРћР™ Р РђР”РРћРђР›Р¤РђР’РРў', cat: 'radio', std: 'Р РµРіР»Р°РјРµРЅС‚ СЂР°РґРёРѕСЃРІСЏР·Рё Р Р¤', fn: toRuRadio, wide: true, cyrillicOnly: true, irreversible: false, note: 'РћС„РёС†РёР°Р»СЊРЅС‹Р№ СЂРµРіР»Р°РјРµРЅС‚ Р Р¤/РЎРЎРЎР ' },
+    { id: 'rot13', title: 'ROT13 / ROT16 (CAESAR)', cat: 'cipher', std: 'RFC 4702 / РРЅРІРѕР»СЋС†РёСЏ', fn: rotInvolution, latinOnly: false, irreversible: false, note: 'Р›Р°С‚РёРЅРёС†Р°: ROT13 / РљРёСЂРёР»Р»РёС†Р°: ROT16' },
+    { id: 'atbash', title: 'ATBASH CIPHER', cat: 'cipher', std: 'Р‘РёРµРєС‚РёРІРЅР°СЏ РёРЅРІРѕР»СЋС†РёСЏ', fn: atbash, latinOnly: false, irreversible: false, note: 'Р—РµСЂРєР°Р»СЊРЅС‹Р№ С€РёС„СЂ (RU/EN)' },
+    { id: 'tapcode', title: 'TAP CODE (РџРћР›РР‘РР™)', cat: 'telecom', std: 'Standard 5x5 Grid', fn: toTapCode, latinOnly: true, irreversible: false, note: 'РўСЋСЂРµРјРЅС‹Р№ Р°РєСѓСЃС‚РёС‡РµСЃРєРёР№ С€РёС„СЂ (K=C)' },
+    { id: 'bacon', title: 'BACON CIPHER', cat: 'cipher', std: '5-Bit Binary Alphabet', fn: toBacon, latinOnly: true, irreversible: false, note: 'Р‘РёРЅР°СЂРЅС‹Р№ С€РёС„СЂ Р¤СЂСЌРЅСЃРёСЃР° Р‘СЌРєРѕРЅР°' },
+    { id: 'braille', title: 'BRAILLE GRADE 1', cat: 'telecom', std: 'Р“РћРЎРў Р  58511 / ISO', fn: toBraille, latinOnly: false, irreversible: false, note: '6-С‚РѕС‡РµС‡РЅС‹Р№ СЂРµР»СЊРµС„РЅС‹Р№ С€СЂРёС„С‚ RU/EN' },
+    { id: 'semaphore', title: 'FLAG SEMAPHORE', cat: 'telecom', std: 'Maritime Standard', fn: toSemaphore, latinOnly: true, irreversible: false, note: 'РћРїС‚РёС‡РµСЃРєРёР№ СЃРµРјР°С„РѕСЂ' },
+    { id: 'zerowidth', title: 'ZERO-WIDTH STEGANO', cat: 'telecom', std: 'Unicode Steganography', fn: toZeroWidth, previewFn: previewZeroWidth, wide: true, latinOnly: false, irreversible: false, note: 'РЎРєСЂС‹С‚С‹Рµ Р±РёС‚С‹ ZWSP/ZWNJ' },
+    { id: 'sha256', title: 'SHA-256 HASH', cat: 'rfc', std: 'FIPS PUB 180-4', fn: computeSha256, async: true, wide: true, latinOnly: false, irreversible: true, note: 'РљСЂРёРїС‚РѕРіСЂР°С„РёС‡РµСЃРєР°СЏ С…РµС€-СЃСѓРјРјР°' }
+  ];
+
+  const grid = document.getElementById('matrixGrid');
+  const cardElements = {};
+
+  MATRIX.forEach((ch, idx) => {
+    const card = document.createElement('div');
+    card.className = `cell ${ch.wide ? 'wide' : ''}`;
+    card.dataset.id = ch.id;
+    card.dataset.cat = ch.cat;
+
+    let badgeClass = 'badge';
+    let badgeText = ch.std;
+
+    if (ch.irreversible) {
+      badgeClass = 'badge badge-irreversible';
+      badgeText = 'РќР•РћР‘Р РђРўРРњ (РҐР•РЁ)';
+    }
+
+    let extraBtn = '';
+    if (ch.audio) {
+      extraBtn = `<button class="action-btn" id="playAudioBtn" type="button">рџ”Љ РўРѕРЅ</button>`;
+    }
+
+    card.innerHTML = `
+      <div class="cell-head">
+        <div class="cell-title-block">
+          <span class="cell-num">${String(idx+1).padStart(2, '0')}</span>
+          <span class="cell-title">${ch.title}</span>
+          <span class="${badgeClass}">${badgeText}</span>
+          <span class="badge badge-warn" id="warnBadge_${ch.id}" style="display:none;">вљ пёЏ РўРѕР»СЊРєРѕ Latin</span>
+        </div>
+        <div class="cell-actions">
+          ${extraBtn}
+          <button class="action-btn send-btn" type="button" title="РћС‚РїСЂР°РІРёС‚СЊ СЂРµР·СѓР»СЊС‚Р°С‚ РІ HashForge">вћ” HashForge</button>
+          <button class="action-btn copy-btn" type="button">РљРѕРїРёСЂРѕРІР°С‚СЊ</button>
+        </div>
+      </div>
+      <div class="cell-body empty">вЂ”</div>
+      <div class="cell-foot">
+        <span>${ch.note}</span>
+        <span class="byte-size">0 Р±Р°Р№С‚</span>
+      </div>
+    `;
+
+    grid.appendChild(card);
+
+    const bodyEl = card.querySelector('.cell-body');
+    const copyBtn = card.querySelector('.copy-btn');
+    const sendBtn = card.querySelector('.send-btn');
+    const byteEl = card.querySelector('.byte-size');
+    const warnEl = card.querySelector(`#warnBadge_${ch.id}`);
+
+    copyBtn.addEventListener('click', () => {
+      const raw = bodyEl.dataset.raw || '';
+      if (!raw) return;
+      navigator.clipboard.writeText(raw).then(() => {
+        copyBtn.textContent = 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ';
+        copyBtn.classList.add('copied');
+        setTimeout(() => {
+          copyBtn.textContent = 'РљРѕРїРёСЂРѕРІР°С‚СЊ';
+          copyBtn.classList.remove('copied');
+        }, 1200);
+      });
+    });
+
+    // РћС‚РїСЂР°РІРєР° СЂРµР·СѓР»СЊС‚Р°С‚Р° РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ СЃС‚Р°РЅРґР°СЂС‚Р° РІ HashForge
+    sendBtn.addEventListener('click', () => {
+      const raw = bodyEl.dataset.raw || '';
+      if (!raw) return;
+      if (window.parent) {
+        window.parent.postMessage({
+          type: 'SIGNAL_TO_HASHFORGE',
+          text: raw,
+          source: ch.title
+        }, '*');
+      }
+    });
+
+    if (ch.audio) {
+      const playBtn = card.querySelector('#playAudioBtn');
+      playBtn.addEventListener('click', () => toggleAudio(bodyEl.dataset.raw || ''));
+    }
+
+    cardElements[ch.id] = { card, bodyEl, byteEl, warnEl, config: ch };
+  });
+
+  let audioCtx = null;
+  let isPlaying = false;
+  let audioTimer = null;
+
+  function stopAudio() {
+    isPlaying = false;
+    if (audioTimer) clearTimeout(audioTimer);
+    const btn = document.getElementById('playAudioBtn');
+    if (btn) {
+      btn.textContent = 'рџ”Љ РўРѕРЅ';
+      btn.classList.remove('active-play');
+    }
+  }
+
+  function toggleAudio(morseStr) {
+    if (isPlaying) { stopAudio(); return; }
+    if (!morseStr || !/[.-]/.test(morseStr)) return;
+
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+
+    isPlaying = true;
+    const btn = document.getElementById('playAudioBtn');
+    if (btn) {
+      btn.textContent = 'вЏ№ РЎС‚РѕРї';
+      btn.classList.add('active-play');
+    }
+
+    const dotMs = 70;
+    const freq = 700;
+    const sequence = [];
+
+    for (let char of morseStr) {
+      if (char === '.') {
+        sequence.push({ on: true, ms: dotMs });
+        sequence.push({ on: false, ms: dotMs });
+      } else if (char === '-') {
+        sequence.push({ on: true, ms: dotMs * 3 });
+        sequence.push({ on: false, ms: dotMs });
+      } else if (char === ' ') {
+        sequence.push({ on: false, ms: dotMs * 2 });
+      } else if (char === '/') {
+        sequence.push({ on: false, ms: dotMs * 4 });
+      }
+    }
+
+    let i = 0;
+    function step() {
+      if (!isPlaying || i >= sequence.length) { stopAudio(); return; }
+      const item = sequence[i++];
+      if (item.on) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.12, audioCtx.currentTime + 0.004);
+        gain.gain.linearRamp
